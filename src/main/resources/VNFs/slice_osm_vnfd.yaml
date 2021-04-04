@@ -1,0 +1,82 @@
+'vnfd:vnfd-catalog':
+  schema-version: v3.0
+  vnfd:
+    - logo: wireguard.png
+      id: slice_osm_vnfd
+      name: slice_osm_vnfd
+      short-name: slice_osm_vnfd
+      vendor: IT Aveiro
+      description: VNFD with 2 CPs to get some metrics fast
+      version: '1.0'
+      mgmt-interface:
+        cp: eth0
+      vdu:
+        - id: wireguard-ubuntu-18.04-server
+          name: wireguard-ubuntu-18.04-server
+          description: Simple VM to create a Wireguard Tunnel
+          count: 1
+          vm-flavor:
+            vcpu-count: 4
+            memory-mb: 4096
+            storage-gb: 30
+          image: ubuntu-18.04-server-amd64
+          cloud-init-file: cloud-init
+          interface:
+            - name: eth0
+              type: EXTERNAL
+              mgmt-interface: true
+              virtual-interface:
+                type: PARAVIRT
+              external-connection-point-ref: eth0
+            - name: wg0
+              type: EXTERNAL
+              virtual-interface:
+                type: PARAVIRT
+              external-connection-point-ref: wg0
+      connection-point:
+        - name: eth0
+          id: eth0
+          short-name: eth0
+          type: VPORT
+        - name: wg0
+          id: wg0
+          short-name: wg0
+          type: VPORT
+      vnf-configuration:
+        juju:
+          charm: wireguardvdu
+        initial-config-primitive:
+          - seq: '1'
+            name: config
+            parameter:
+              - name: ssh-hostname
+                value: <rw_mgmt_ip>
+              - name: ssh-username
+                value: ubuntu
+              - name: ssh-password
+                value: ubuntu
+        config-primitive:
+          - name: config
+            parameter:
+              - name: listen_port
+                data-type: INTEGER
+                default-value: 51820
+              - name: server_tunnel_address
+                data-type: STRING
+                default-value: 10.0.0.1/24
+              - name: client_tunnel_address
+                data-type: STRING
+                default-value: 10.0.0.2/24
+              - name: server_public_address
+                data-type: STRING
+                default-value: 10.0.13.214/23
+              - name: foward_interface
+                data-type: STRING
+                default-value: wg0
+                hidden: true
+              - name: save_config
+                data-type: BOOLEAN
+                default-value: true
+              - name: wg_server
+                data-type: BOOLEAN
+                default-value: true

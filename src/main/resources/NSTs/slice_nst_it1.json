@@ -1,0 +1,65 @@
+{
+  "nst": [
+    {
+      "id": "slice_nst_it1",
+      "name": "slice_iperf",
+      "SNSSAI_identifier": {
+        "slice-service-type": "eMBB"
+      },
+      "quality-of-service": {
+        "id": 1
+      },
+      "netslice_vld": [
+
+        {
+          "id": "slice_vld_mgmt",
+          "name": "slice_vld_mgmt",
+          "short-name": "slice_vld_mgmt",
+          "vendor": "IT-Aveiro",
+          "type": "ELAN",
+          "nss-connection-point-ref": [
+            {
+              "nsd-connection-point-ref": "nsd_cp_mgmt",
+              "nss-ref": "slice_osm_nsd"
+            }
+          ]
+        },
+        {
+          "id": "slice_vld_data",
+          "name": "slice_vld_data",
+          "short-name": "slice_vld_data",
+          "vendor": "IT-Aveiro",
+          "type": "ELAN",
+          "nss-connection-point-ref": [
+            {
+              "nsd-connection-point-ref": "nsd_cp_data",
+              "nss-ref": "slice_osm_nsd"
+            }
+          ]
+        }
+      ],
+      "netslice_subnet": [
+        {
+          "nsd-ref": "slice_osm_nsd",
+          "is-shared-nss": false,
+          "id": "slice_osm_nsd",
+          "description": "NetSlice Subnet (service) composed by 1 vnf with 2 cp"
+        }
+      ],
+      "netslice-connection-point": [
+        {
+          "floating-ip-required": false,
+          "nsd-id-ref": "slice_osm_nsd",
+          "nsd-connection-point-ref": "nsd_cp_mgmt",
+          "name": "slice_vld_mgmt"
+        },
+        {
+          "floating-ip-required": false,
+          "nsd-id-ref": "slice_osm_nsd",
+          "nsd-connection-point-ref": "nsd_cp_data",
+          "name": "slice_vld_data"
+        }
+      ]
+    }
+  ]
+}

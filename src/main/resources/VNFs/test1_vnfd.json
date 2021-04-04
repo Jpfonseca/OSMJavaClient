@@ -1,0 +1,31 @@
+{
+  "vnfd:vnfd-catalog": {
+    "vnfd": [
+      {
+        "id":"slice_basic1_vnfd",
+        "name": "slice_basic1_vnfd",
+        "short-name": "slice_basic1_vnfd",
+        "vendor": "IT Aveiro",
+        "description": "VNFD with 2 CPs to get some metrics fast",
+        "version": "1.0",
+        "mgmt-interface": {
+          "cp": "eth0"
+        },
+        "connection-point": [
+          {
+            "name":"eth0",
+            "id":"eth0",
+            "short-name": "eth0",
+            "type": "VPORT"
+          },
+          {
+            "name":"eth1",
+            "id":"eth1",
+            "short-name": "eth1",
+            "type": "VPORT"
+          }
+        ]
+      }
+    ]
+  }
+}

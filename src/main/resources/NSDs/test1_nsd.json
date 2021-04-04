@@ -1,0 +1,45 @@
+{
+  "nsd:nsd-catalog": {
+    "nsd": [
+      {
+        "short-name": "slice_basic1_nsd",
+        "vendor": "IT Aveiro",
+        "name": "slice_basic1_nsd",
+        "id": "slice_basic1_nsd",
+        "constituent-vnfd": [
+          {
+            "member-vnf-index": "1",
+            "vnfd-id-ref": "slice_basic1_vnfd"
+          }
+        ],
+        "version": "1.0",
+        "logo": "",
+        "connection-point": [
+          {
+            "floating-ip-required": false,
+            "vnfd-connection-point-ref": [
+              {
+                "vnfd-connection-point-ref": "eth0",
+                "member-vnf-index-ref": "1",
+                "vnfd-id-ref": "slice_basic1_vnfd"
+              }
+            ],
+            "name": "nsd_cp_mgmt"
+          },
+          {
+            "floating-ip-required": false,
+            "vnfd-connection-point-ref": [
+              {
+                "member-vnfd-index-ref": "1",
+                "vnfd-connection-point-ref": "eth1",
+                "vnf-id-ref": "slice_basic1_vnfd"
+              }
+            ],
+            "name": "nsd_cp_data"
+          }
+        ],
+        "description": "A simple NS to test a cp"
+      }
+    ]
+  }
+}

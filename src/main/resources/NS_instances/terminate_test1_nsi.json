@@ -1,0 +1,6 @@
+{
+  "timeout_ns_terminate": 2,
+  "autoremove": false,
+  "skip_terminate_primitives": true
+}
+

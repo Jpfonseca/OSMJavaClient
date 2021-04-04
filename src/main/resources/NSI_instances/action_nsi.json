@@ -1,0 +1,8 @@
+{
+  "primitive": "add_peer",
+  "primitive_params": {
+    "additionalProp1": {}
+  },
+  "lcmOperationType": "action",
+  "netsliceInstanceId": "string"
+}

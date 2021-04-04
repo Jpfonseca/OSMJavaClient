@@ -1,0 +1,147 @@
+{
+  "nsiName": "string",
+  "nstId": "string",
+  "vimAccountId": "string",
+  "lcmOperationType": "string",
+  "netsliceInstanceId": "string",
+  "nsiDescription": "string",
+  "ssh_keys": "string",
+  "nsi_id": "string",
+  "additionalParamsForNsi": {
+    "additionalProp1": {}
+  },
+  "netslice-subnet": [
+    {
+      "id": "string",
+      "nsName": "string",
+      "nsdId": "string",
+      "vimAccountId": "string",
+      "lcmOperationType": "string",
+      "nsInstanceId": "string",
+      "netsliceInstanceId": "string",
+      "nsDescription": "string",
+      "additionalParamsForNs": {
+        "additionalProp1": {}
+      },
+      "additionalParamsForVnf": [
+        {
+          "member-vnf-index": "string",
+          "additionalParams": {
+            "additionalProp1": {}
+          },
+          "k8s-namespace": "string",
+          "additionalParamsForVdu": [
+            {
+              "vdu_id": "string",
+              "additionalParams": {
+                "additionalProp1": {}
+              }
+            }
+          ],
+          "additionalParamsForKdu": [
+            {
+              "kdu_name": "string",
+              "k8s-namespace": "string",
+              "kdu_model": "string",
+              "additionalParams": {
+                "additionalProp1": {}
+              }
+            }
+          ]
+        }
+      ],
+      "ssh_keys": [
+        "string"
+      ],
+      "nsr_id": "string",
+      "vduImage": "string",
+      "vnf": [
+        {
+          "member-vnf-index": "string",
+          "vimAccountId": "string",
+          "vdu": [
+            {
+              "id": "string",
+              "volume": [
+                {
+                  "name": "string",
+                  "vim-volume-id": "string"
+                }
+              ],
+              "interface": [
+                {
+                  "name": "string",
+                  "ip-address": "string",
+                  "mac-address": "string",
+                  "floating-ip-required": true
+                }
+              ]
+            }
+          ],
+          "internal-vld": [
+            {
+              "name": "string",
+              "vim-network-name": "string",
+              "vim-network-id": "string",
+              "ip-profile": {
+                "ip-version": "ipv4",
+                "subnet-address": "string",
+                "gateway-address": "string",
+                "dns-server": [
+                  {
+                    "address": "string"
+                  }
+                ],
+                "dhcp-params": {
+                  "enabled": true,
+                  "count": 0,
+                  "start-address": "string"
+                }
+              },
+              "provider-network": {
+                "physical-network": "string",
+                "segmentation-id": "string"
+              },
+              "internal-connection-point": [
+                {
+                  "id-ref": "string",
+                  "ip-address": "string"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "vld": [
+        {
+          "name": "string",
+          "ns-net": {
+            "additionalProp1": {}
+          },
+          "ip-profile": {
+            "additionalProp1": {}
+          },
+          "provider-network": {
+            "physical-network": "string",
+            "segmentation-id": "string"
+          },
+          "vnfd-connection-point-ref": [
+            {
+              "member-vnf-index-ref": "string",
+              "vnfd-connection-point-ref": "string",
+              "ip-address": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "netslice-vld": [
+    {
+      "name": "string",
+      "ip-profile": {
+        "additionalProp1": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "nsd:nsd-catalog": {
+    "nsd": [
+      {
+        "short-name": "slice_osm_nsd",
+        "vendor": "IT Aveiro",
+        "name": "slice_osm_nsd",
+        "vld": [
+          {
+            "short-name": "nsd_vnfd_vld_mgmt",
+            "name": "nsd_vnfd_vld_mgmt",
+            "mgmt-network": true,
+            "vnfd-connection-point-ref": [
+              {
+                "vnfd-connection-point-ref": "eth0",
+                "member-vnf-index-ref": "1",
+                "vnfd-id-ref": "slice_osm_vnfd"
+              }
+            ],
+            "type": "ELAN",
+            "id": "nsd_vnfd_osm_mgmt"
+          },
+          {
+            "short-name": "nsd_vnfd_vld_data",
+            "name": "nsd_vnfd_vld_data",
+            "mgmt-network": true,
+            "vnfd-connection-point-ref": [
+              {
+                "vnfd-connection-point-ref": "wg0",
+                "member-vnf-index-ref": "1",
+                "vnfd-id-ref": "slice_osm_vnfd"
+              }
+            ],
+            "type": "ELAN",
+            "id": "nsd_vnfd_vld_data"
+          }
+        ],
+        "id": "slice_basic_nsd",
+        "constituent-vnfd": [
+          {
+            "member-vnf-index": "1",
+            "vnfd-id-ref": "slice_osm_vnfd"
+          }
+        ],
+        "version": "1.0",
+        "logo": "",
+        "connection-point": [
+          {
+            "floating-ip-required": false,
+            "vnfd-connection-point-ref": [
+              {
+                "vnfd-connection-point-ref": "eth0",
+                "member-vnf-index-ref": "1",
+                "vnfd-id-ref": "slice_osm_vnfd",
+                "ip-address": "10.0.13.214/23"
+              }
+            ],
+            "name": "nsd_cp_mgmt"
+          },
+          {
+            "floating-ip-required": false,
+            "vnfd-connection-point-ref": [
+              {
+                "member-vnfd-index-ref": "1",
+                "vnfd-connection-point-ref": "wg0",
+                "vnf-id-ref": "slice_osm_vnfd",
+                "ip-address": "10.0.0.1/24"
+              }
+            ],
+            "name": "nsd_cp_data"
+          }
+        ],
+        "description": "A simple NS to test a cp",
+        "ip-profiles": [{
+            "name": "mgmt_ip",
+            "description": "Internet",
+            "ip-profile-params": {
+              "subnet-address": "10.0.13.0/23",
+              "gateway-address": "10.0.12.1/23",
+              "security-group": "test",
+              "dns-server": [
+                {"address": "193.136.92.73"},
+                {"address": "193.136.92.74"}
+              ]
+            }
+          }
+          ]
+      }
+    ]
+  }
+}

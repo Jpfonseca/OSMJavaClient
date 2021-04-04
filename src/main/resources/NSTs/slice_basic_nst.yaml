@@ -1,0 +1,7 @@
+nst:
+  -   id: slice_basic_nst
+      name: slice_basic_nst
+      SNSSAI-identifier:
+        slice-service-type: eMBB
+      quality-of-service:
+        id: 1

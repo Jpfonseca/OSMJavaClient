@@ -1,0 +1,11 @@
+{
+  "primitive": "string",
+  "primitive_params": {
+    "test": "test"
+  },
+  "member_vnf_index": "string",
+  "vdu_id": "string",
+  "kdu_name": "string",
+  "vdu_count_index": 0,
+  "timeout_ns_action": 0
+}
