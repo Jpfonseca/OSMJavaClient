@@ -1,8 +1,8 @@
-package Interfaces;
+package pt.av.it.SimpleDriver.Interfaces;
 
-import OpenApiOps.*;
-import Requests.AsyncRequests;
-import Requests.OsmClientProperties;
+import pt.av.it.SimpleDriver.OpenApiOps.*;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.SimpleDriver.Requests.OsmClientProperties;
 
 public interface OSMClientInterface {
     String uri="";

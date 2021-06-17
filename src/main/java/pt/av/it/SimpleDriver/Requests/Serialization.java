@@ -1,4 +1,4 @@
-package Requests;
+package pt.av.it.SimpleDriver.Requests;
 
 import org.json.simple.JSONObject;
 import org.yaml.snakeyaml.Yaml;

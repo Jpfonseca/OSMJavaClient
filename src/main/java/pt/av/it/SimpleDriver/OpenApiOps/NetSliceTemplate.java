@@ -1,15 +1,11 @@
-package OpenApiOps;
-
-import Interfaces.NetSliceTemplateInterface;
-import Requests.Headers;
-import Requests.AsyncRequests;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
+package pt.av.it.SimpleDriver.OpenApiOps;
 
 import java.io.File;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import pt.av.it.SimpleDriver.Interfaces.NetSliceTemplateInterface;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.SimpleDriver.Requests.Headers;
 
 public class NetSliceTemplate implements NetSliceTemplateInterface {
     private static NetSliceTemplate instance;

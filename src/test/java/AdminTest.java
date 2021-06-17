@@ -1,18 +1,16 @@
-import Requests.OsmClientProperties;
-import Requests.PropertiesHandler;
+import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.*;
-
-import java.util.logging.Logger;
-
 import static org.junit.jupiter.api.Assertions.*;
+import pt.av.it.SimpleDriver.Requests.OsmClientProperties;
+import pt.av.it.SimpleDriver.Requests.PropertiesHandler;
 
 @DisplayName("Admin Test Scenario")
 public class AdminTest {
-    private OSMClient osmClient;
+    private pt.av.it.SimpleDriver.OSMClient osmClient;
     private String token;
     private static final Logger logger = Logger.getLogger(AdminTest.class.getName());
 
@@ -25,7 +23,7 @@ public class AdminTest {
         assert(handler.getNumberofOsmClients()>0);
         if(handler.getNumberofOsmClients()>0){
             properties=handler.getOsmClientProperties(handler.getNumberofOsmClients()-1);
-            osmClient=new OSMClient(properties.getUri(), properties.getUser(), properties.getPassword(), properties.getProject(), properties.getVimAccount());
+            osmClient=new pt.av.it.SimpleDriver.OSMClient(properties.getUri(), properties.getUser(), properties.getPassword(), properties.getProject(), properties.getVimAccount());
             osmClient.newCurrentToken();
             token=osmClient.getcurrentTOKEN_ID();
         }

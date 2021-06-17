@@ -1,18 +1,14 @@
-package OpenApiOps;
-
-import Interfaces.VnfPackagesInterface;
-import Requests.AsyncRequests;
-import Requests.Headers;
-import Requests.Serialization;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import OpenApiOps.ApiCalls;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.yaml.snakeyaml.Yaml;
+package pt.av.it.SimpleDriver.OpenApiOps;
 
 import java.io.File;
-import java.util.Map;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import pt.av.it.SimpleDriver.Interfaces.VnfPackagesInterface;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.SimpleDriver.Requests.Headers;
+import pt.av.it.SimpleDriver.Requests.Serialization;
 
 public class VnfPackages implements VnfPackagesInterface {
     private static VnfPackages instance;

@@ -1,19 +1,20 @@
-import Interfaces.OSMClientInterface;
-import OpenApiOps.*;
-import Requests.AsyncRequests;
+package pt.av.it.SimpleDriver;
 import org.json.simple.JSONObject;
+import pt.av.it.SimpleDriver.Interfaces.OSMClientInterface;
+import pt.av.it.SimpleDriver.OpenApiOps.*;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 // Add to jvm for debugging purposes -Djavax.net.debug=SSL,trustmanager,handshake
 
 public class OSMClient extends Admin implements OSMClientInterface {
     private  String vimAccount;
-    protected final ApiCalls apiCalls;
-    protected final VnfPackages vnfPackages;
-    protected final NsPackages nsPackages;
-    protected final NsInstances nsInstances;
-    protected final NetSliceTemplate netSliceTemplateOps;
-    protected final NetSliceInstance netSliceInstanceOps;
-    protected final AdminOperations adminOperations;
+    public final ApiCalls apiCalls;
+    public final VnfPackages vnfPackages;
+    public final NsPackages nsPackages;
+    public final NsInstances nsInstances;
+    public final NetSliceTemplate netSliceTemplateOps;
+    public final NetSliceInstance netSliceInstanceOps;
+    public final AdminOperations adminOperations;
 
 
     public OSMClient(String uri,String username, String password, String project_id,String vimAccount){

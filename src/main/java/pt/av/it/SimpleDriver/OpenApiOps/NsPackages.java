@@ -1,15 +1,14 @@
-package OpenApiOps;
+package pt.av.it.SimpleDriver.OpenApiOps;
 
-import Interfaces.NsPackagesInterface;
-import Requests.AsyncRequests;
-import Requests.Headers;
-import Requests.Serialization;
+import java.io.File;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import java.io.File;
+import pt.av.it.SimpleDriver.Interfaces.NsPackagesInterface;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.SimpleDriver.Requests.Headers;
+import pt.av.it.SimpleDriver.Requests.Serialization;
 
 public class NsPackages  implements NsPackagesInterface {
     private static NsPackages instance;

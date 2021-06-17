@@ -1,4 +1,4 @@
-package Requests;
+package pt.av.it.SimpleDriver.Requests;
 
 import java.io.File;
 import java.io.IOException;

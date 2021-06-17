@@ -1,8 +1,8 @@
-package OpenApiOps;
+package pt.av.it.SimpleDriver.OpenApiOps;
 
 
-import Interfaces.ApiCallsInterface;
-import Requests.AsyncRequests;
+import pt.av.it.SimpleDriver.Interfaces.ApiCallsInterface;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 public class ApiCalls implements ApiCallsInterface {
 

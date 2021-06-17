@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pt.av.it.SimpleDriver</groupId>
+    <groupId>pt.av.it</groupId>
     <artifactId>SimpleDriver</artifactId>
     <version>1.0-SNAPSHOT</version>
     <build>
@@ -78,6 +78,23 @@
             <version>4.5.10</version>
         </dependency>
         
+        <dependency>
+            <groupId>it.nextworks.nfvmano</groupId>
+            <artifactId>DomainLayerCatalogue</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>it.nextworks.nfvmano</groupId>
+            <artifactId>NsTemplatesCatalogue</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>it.nextworks.nfvmano</groupId>
+            <artifactId>VSFM_SERVICE</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
 </project>

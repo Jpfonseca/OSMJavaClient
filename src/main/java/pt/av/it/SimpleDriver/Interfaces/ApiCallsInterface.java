@@ -1,6 +1,6 @@
-package Interfaces;
+package pt.av.it.SimpleDriver.Interfaces;
 
-import Requests.AsyncRequests;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 public interface ApiCallsInterface {
     String currentTOKEN_ID="";

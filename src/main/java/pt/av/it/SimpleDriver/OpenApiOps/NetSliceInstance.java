@@ -1,11 +1,17 @@
-package OpenApiOps;
+package pt.av.it.SimpleDriver.OpenApiOps;
 
-import Interfaces.NetSliceInstanceInterface;
-import Requests.AsyncRequests;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pt.av.it.SimpleDriver.Interfaces.NetSliceInstanceInterface;
+import pt.av.it.SimpleDriver.OsmVsDriver;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 public class NetSliceInstance implements NetSliceInstanceInterface {
+    
+    private static final Logger log = LoggerFactory.getLogger(OsmVsDriver.class);
+    
     private static NetSliceInstance instance;
 
     private final ApiCalls apiCalls;
@@ -48,6 +54,7 @@ public class NetSliceInstance implements NetSliceInstanceInterface {
     public JSONObject createNsi(JSONObject Netslice) {
         JSONObject answer=null;
         JSONObject response=http.response(http.post("/nsilcm/v1/netslice_instances" ,Netslice.toJSONString(),apiCalls.getCurrentTOKEN_ID()));
+        
         if((int)response.get("status_code")==201){
             answer= (JSONObject) response.get("message");
         }
