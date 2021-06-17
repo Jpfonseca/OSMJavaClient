@@ -1,9 +1,9 @@
-package OpenApiOps;
+package pt.av.it.SimpleDriver.OpenApiOps;
 
-import Interfaces.NsInstancesInterface;
-import Requests.AsyncRequests;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import pt.av.it.SimpleDriver.Interfaces.NsInstancesInterface;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 /**
  * Network Service Instances related Operations

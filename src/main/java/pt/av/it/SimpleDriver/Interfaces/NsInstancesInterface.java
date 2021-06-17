@@ -1,4 +1,4 @@
-package Interfaces;
+package pt.av.it.SimpleDriver.Interfaces;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

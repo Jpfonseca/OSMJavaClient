@@ -1,9 +1,9 @@
-package OpenApiOps;
+package pt.av.it.SimpleDriver.OpenApiOps;
 
-import Interfaces.AdminOperationsInterface;
-import Requests.AsyncRequests;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import pt.av.it.SimpleDriver.Interfaces.AdminOperationsInterface;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 public class AdminOperations extends Admin implements AdminOperationsInterface {
 

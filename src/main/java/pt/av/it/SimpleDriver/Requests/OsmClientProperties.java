@@ -1,4 +1,4 @@
-package Requests;
+package pt.av.it.SimpleDriver.Requests;
 
 public class OsmClientProperties {
     String uri;

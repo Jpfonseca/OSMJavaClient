@@ -1,11 +1,10 @@
-package OpenApiOps;
-
-import Interfaces.AdminInterface;
-import Requests.AsyncRequests;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+package pt.av.it.SimpleDriver.OpenApiOps;
 
 import java.time.Instant;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import pt.av.it.SimpleDriver.Interfaces.AdminInterface;
+import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 public abstract class Admin implements AdminInterface {
 

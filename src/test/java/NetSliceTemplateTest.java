@@ -1,5 +1,7 @@
-import Requests.OsmClientProperties;
-import Requests.PropertiesHandler;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -7,16 +9,12 @@ import org.json.simple.parser.ParseException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.logging.Logger;
-
 import static org.junit.jupiter.api.Assertions.*;
+import pt.av.it.SimpleDriver.Requests.OsmClientProperties;
+import pt.av.it.SimpleDriver.Requests.PropertiesHandler;
 
 public class NetSliceTemplateTest {
-    private OSMClient osmClient;
+    private pt.av.it.SimpleDriver.OSMClient osmClient;
     private static final Logger logger = Logger.getLogger(AdminOperationsTest.class.getName());
 
     private String token,path=null;
@@ -31,7 +29,7 @@ public class NetSliceTemplateTest {
         assert(handler.getNumberofOsmClients()>0);
         if(handler.getNumberofOsmClients()>0){
             properties=handler.getOsmClientProperties(handler.getNumberofOsmClients()-1);
-            osmClient=new OSMClient(properties.getUri(), properties.getUser(), properties.getPassword(), properties.getProject(), properties.getVimAccount());
+            osmClient=new pt.av.it.SimpleDriver.OSMClient(properties.getUri(), properties.getUser(), properties.getPassword(), properties.getProject(), properties.getVimAccount());
             osmClient.newCurrentToken();
             token=osmClient.getcurrentTOKEN_ID();
             path=handler.getPath();

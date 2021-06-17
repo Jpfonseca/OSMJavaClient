@@ -1,4 +1,4 @@
-package Requests;
+package pt.av.it.SimpleDriver.Requests;
 
 public enum Headers {
     TEXT("text/plain"),
