@@ -8,13 +8,13 @@ import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 public class OSMClient extends Admin implements OSMClientInterface {
     private  String vimAccount;
-    public final ApiCalls apiCalls;
-    public final VnfPackages vnfPackages;
-    public final NsPackages nsPackages;
-    public final NsInstances nsInstances;
-    public final NetSliceTemplate netSliceTemplateOps;
-    public final NetSliceInstance netSliceInstanceOps;
-    public final AdminOperations adminOperations;
+    public ApiCalls apiCalls;
+    public VnfPackages vnfPackages;
+    public NsPackages nsPackages;
+    public NsInstances nsInstances;
+    public NetSliceTemplate netSliceTemplateOps;
+    public NetSliceInstance netSliceInstanceOps;
+    public AdminOperations adminOperations;
 
 
     public OSMClient(String uri,String username, String password, String project_id,String vimAccount){
@@ -24,12 +24,19 @@ public class OSMClient extends Admin implements OSMClientInterface {
 
         uri=uri+"/osm";
         this.apiCalls= new ApiCalls(new AsyncRequests(uri) ,newToken());
-        this.vnfPackages= VnfPackages.vnfPackages(apiCalls);
-        this.nsPackages= NsPackages.nsPackages(apiCalls);
-        this.nsInstances= NsInstances.nsInstances(apiCalls);
-        this.netSliceTemplateOps= NetSliceTemplate.netSliceTemplate(apiCalls);
-        this.netSliceInstanceOps= NetSliceInstance.netSliceInstance(apiCalls);
-        this.adminOperations= AdminOperations.adminOperations(apiCalls);
+//        this.vnfPackages= VnfPackages.vnfPackages(apiCalls);
+//        this.nsPackages= NsPackages.nsPackages(apiCalls);
+//        this.nsInstances= NsInstances.nsInstances(apiCalls);
+//        this.netSliceTemplateOps= NetSliceTemplate.netSliceTemplate(apiCalls);
+//        this.netSliceInstanceOps= NetSliceInstance.netSliceInstance(apiCalls);
+//        this.adminOperations= AdminOperations.adminOperations(apiCalls);
+
+        this.vnfPackages= new VnfPackages(apiCalls);
+        this.nsPackages= new NsPackages(apiCalls);
+        this.nsInstances= new NsInstances(apiCalls);
+        this.netSliceTemplateOps= new NetSliceTemplate(apiCalls);
+        this.netSliceInstanceOps= new NetSliceInstance(apiCalls);
+        this.adminOperations= new AdminOperations(apiCalls);
     }
 
 

@@ -12,9 +12,10 @@ import pt.av.it.SimpleDriver.Requests.Serialization;
 
 public class NsPackages  implements NsPackagesInterface {
     private static NsPackages instance;
-    private final AsyncRequests http;
-    private final ApiCalls apiCalls;
-    private NsPackages(ApiCalls apiCalls){
+    private AsyncRequests http;
+    private ApiCalls apiCalls;
+    
+    public NsPackages(ApiCalls apiCalls){
         this.apiCalls=apiCalls;
         this.http=apiCalls.getHttp();
     }

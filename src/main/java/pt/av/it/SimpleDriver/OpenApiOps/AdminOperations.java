@@ -9,10 +9,10 @@ public class AdminOperations extends Admin implements AdminOperationsInterface {
 
     private static AdminOperations instance;
 
-    private final ApiCalls apiCalls;
-    private final AsyncRequests http;
+    private ApiCalls apiCalls;
+    private AsyncRequests http;
 
-    private AdminOperations(ApiCalls apiCalls){
+    public AdminOperations(ApiCalls apiCalls){
         super(apiCalls);
         this.apiCalls=apiCalls;
         this.http=apiCalls.getHttp();
