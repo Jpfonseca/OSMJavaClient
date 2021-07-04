@@ -9,10 +9,10 @@ import pt.av.it.SimpleDriver.Requests.Headers;
 
 public class NetSliceTemplate implements NetSliceTemplateInterface {
     private static NetSliceTemplate instance;
-    private final ApiCalls apiCalls;
-    private final AsyncRequests http;
+    private ApiCalls apiCalls;
+    private AsyncRequests http;
     
-    private NetSliceTemplate(ApiCalls apiCalls) {
+    public NetSliceTemplate(ApiCalls apiCalls) {
         this.apiCalls=apiCalls;
         this.http = apiCalls.getHttp();
     }

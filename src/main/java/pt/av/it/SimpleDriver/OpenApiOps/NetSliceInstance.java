@@ -14,10 +14,10 @@ public class NetSliceInstance implements NetSliceInstanceInterface {
     
     private static NetSliceInstance instance;
 
-    private final ApiCalls apiCalls;
-    private final AsyncRequests http;
+    private ApiCalls apiCalls;
+    private AsyncRequests http;
 
-    private NetSliceInstance(ApiCalls apiCalls){
+    public NetSliceInstance(ApiCalls apiCalls){
         this.apiCalls=apiCalls;
         this.http=apiCalls.getHttp();
     }
@@ -43,7 +43,8 @@ public class NetSliceInstance implements NetSliceInstanceInterface {
         }
         return answer;
     }
-
+    
+    
     /**
      * Create a new NetSlice instance resource
      *
@@ -54,7 +55,6 @@ public class NetSliceInstance implements NetSliceInstanceInterface {
     public JSONObject createNsi(JSONObject Netslice) {
         JSONObject answer=null;
         JSONObject response=http.response(http.post("/nsilcm/v1/netslice_instances" ,Netslice.toJSONString(),apiCalls.getCurrentTOKEN_ID()));
-        
         if((int)response.get("status_code")==201){
             answer= (JSONObject) response.get("message");
         }
@@ -105,6 +105,7 @@ public class NetSliceInstance implements NetSliceInstanceInterface {
     public JSONObject instantiateNsi(String netSliceInstaceId, JSONObject instantiationRequest) {
         JSONObject answer=null;
         JSONObject response=http.response(http.post("/nsilcm/v1/netslice_instances/"+netSliceInstaceId+"/instantiate" ,instantiationRequest.toJSONString(),apiCalls.getCurrentTOKEN_ID()));
+        log.info(response.toJSONString());
         if((int)response.get("status_code")==202){
             answer= (JSONObject) response.get("message");
         }

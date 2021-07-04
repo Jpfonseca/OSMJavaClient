@@ -2,7 +2,10 @@ package pt.av.it.SimpleDriver.OpenApiOps;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.av.it.SimpleDriver.Interfaces.NsInstancesInterface;
+import pt.av.it.SimpleDriver.OsmVsDriver;
 import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 /**
@@ -11,10 +14,10 @@ import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 public class NsInstances implements NsInstancesInterface {
     private static NsInstances instance;
     
-    private final AsyncRequests http;
-    private final ApiCalls apiCalls;
+    private AsyncRequests http;
+    private ApiCalls apiCalls;
     
-    private NsInstances(ApiCalls apiCalls) {
+    public NsInstances(ApiCalls apiCalls) {
         this.http=apiCalls.getHttp();
         this.apiCalls=apiCalls;
     }
@@ -137,6 +140,8 @@ public class NsInstances implements NsInstancesInterface {
         return answer;
     }
 
+    private static final Logger log = LoggerFactory.getLogger(OsmVsDriver.class);
+    
     /***
      * Execute an action on a NS instance.
      * The NS instance must have been created and must be in INSTANTIATED state.
@@ -147,9 +152,10 @@ public class NsInstances implements NsInstancesInterface {
     public JSONObject actionNSi(String nsInstanceId, JSONObject NSinstanceActionRequest) {
 
         JSONObject answer=null;
-        JSONObject response=http.response(http.post("/nslcm/v1/ns_instances/"+nsInstanceId+"/action",NSinstanceActionRequest
-                .toJSONString(), apiCalls.getCurrentTOKEN_ID()));
-        if((int)response.get("status_code")==200){
+        log.info(NSinstanceActionRequest.toJSONString()+" -----|------ "+apiCalls.getCurrentTOKEN_ID());
+        JSONObject response=http.response(http.post("/nslcm/v1/ns_instances/"+nsInstanceId+"/action",NSinstanceActionRequest.toJSONString(), apiCalls.getCurrentTOKEN_ID()));
+        log.info(response.toJSONString());
+        if((int)response.get("status_code")==200 || (int)response.get("status_code")==202){
             answer= (JSONObject) response.get("message");
         }
         return answer;

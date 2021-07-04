@@ -3,6 +3,9 @@ package pt.av.it.SimpleDriver.Requests;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -12,10 +15,18 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,15 +37,40 @@ public class AsyncRequests {
     private final String URI;
     private final String userAgent;
     private static final Logger logger = Logger.getLogger(AsyncRequests.class.getName());
+    
+    private CloseableHttpClient httpClient;
+
 
     public AsyncRequests(String uri){
 
         this.URI=uri;
         PropertiesHandler propertiesHandler=new PropertiesHandler();
         this.userAgent=propertiesHandler.readUserAgent();
+        
+        SSLContextBuilder builder = new SSLContextBuilder();
+        SSLConnectionSocketFactory sslsf = null;
+        try {
+            builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+            sslsf = new SSLConnectionSocketFactory(builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(AsyncRequests.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (KeyStoreException ex) {
+            Logger.getLogger(AsyncRequests.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (KeyManagementException ex) {
+            Logger.getLogger(AsyncRequests.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder. 
+                         <ConnectionSocketFactory> create()
+                        .register("http", new PlainConnectionSocketFactory())
+                        .register("https", sslsf)
+                        .build();
+
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
+        cm.setMaxTotal(2000);
+        
+        this.httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).setConnectionManager(cm).build();
     }
-    private static final CloseableHttpClient httpClient = HttpClients.createDefault();
     
     public HttpRequestBase get(String endpoint, String token_id){
 //        URI test=null;
@@ -452,6 +488,7 @@ public class AsyncRequests {
 //        }
 
 
+
         int status_code=0;
         String inforequest = "/admin/",result = null;
         try {
@@ -465,13 +502,10 @@ public class AsyncRequests {
         JSONParser parser = new JSONParser();
         Object obj = null;
 
-        if(result.length()>2){
-            try {
-
-                obj =parser.parse(result);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        try {
+            obj = parser.parse(result);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         JSONObject jsonResponse= new JSONObject();
@@ -521,12 +555,10 @@ public class AsyncRequests {
             case JSON:
                 JSONParser parser = new JSONParser();
 
-                if(result.length()>2){
-                    try {
-                        obj =parser.parse(result);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    obj =parser.parse(result);
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
                 break;
             case TEXT:

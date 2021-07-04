@@ -13,9 +13,10 @@ import pt.av.it.SimpleDriver.Requests.Serialization;
 public class VnfPackages implements VnfPackagesInterface {
     private static VnfPackages instance;
     
-    private final AsyncRequests http;
-    private final ApiCalls apiCalls;
-    private VnfPackages(ApiCalls apiCalls){
+    private AsyncRequests http;
+    private ApiCalls apiCalls;
+    
+    public VnfPackages(ApiCalls apiCalls){
         this.apiCalls=apiCalls;
         this.http=apiCalls.getHttp();
     }
