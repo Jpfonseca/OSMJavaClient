@@ -23,7 +23,7 @@ public class OSMClient extends Admin implements OSMClientInterface {
         //After authenticating sucessfully we can use the assigned token, unfortunately do to the way java handles arguments the Properties Handler is instanced twice :|
 
         uri=uri+"/osm";
-        this.apiCalls= new ApiCalls(new AsyncRequests(uri) ,newToken());
+        this.apiCalls= new ApiCalls(new AsyncRequests(uri) , "test");
 //        this.vnfPackages= VnfPackages.vnfPackages(apiCalls);
 //        this.nsPackages= NsPackages.nsPackages(apiCalls);
 //        this.nsInstances= NsInstances.nsInstances(apiCalls);

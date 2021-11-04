@@ -2,10 +2,7 @@ package pt.av.it.SimpleDriver.OpenApiOps;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pt.av.it.SimpleDriver.Interfaces.NsInstancesInterface;
-import pt.av.it.SimpleDriver.OsmVsDriver;
 import pt.av.it.SimpleDriver.Requests.AsyncRequests;
 
 /**
@@ -140,8 +137,6 @@ public class NsInstances implements NsInstancesInterface {
         return answer;
     }
 
-    private static final Logger log = LoggerFactory.getLogger(OsmVsDriver.class);
-    
     /***
      * Execute an action on a NS instance.
      * The NS instance must have been created and must be in INSTANTIATED state.
@@ -152,9 +147,7 @@ public class NsInstances implements NsInstancesInterface {
     public JSONObject actionNSi(String nsInstanceId, JSONObject NSinstanceActionRequest) {
 
         JSONObject answer=null;
-        log.info(NSinstanceActionRequest.toJSONString()+" -----|------ "+apiCalls.getCurrentTOKEN_ID());
         JSONObject response=http.response(http.post("/nslcm/v1/ns_instances/"+nsInstanceId+"/action",NSinstanceActionRequest.toJSONString(), apiCalls.getCurrentTOKEN_ID()));
-        log.info(response.toJSONString());
         if((int)response.get("status_code")==200 || (int)response.get("status_code")==202){
             answer= (JSONObject) response.get("message");
         }
