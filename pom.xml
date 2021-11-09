@@ -5,8 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>pt.av.it</groupId>
-    <artifactId>SimpleDriver</artifactId>
+    <artifactId>OsmDriverITAV</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <developers>
+        <developer>João Fonseca (jpedrofonseca@av.it.pt)</developer>
+        <developer>João Alegria (joao.p@av.it.pt)</developer>
+    </developers>
     <build>
         <plugins>
             <plugin>
@@ -94,6 +98,12 @@
             <artifactId>VSFM_SERVICE</artifactId>
             <version>0.0.2-SNAPSHOT</version>
             <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>pt.av.it</groupId>
+                    <artifactId>OsmDriverItav</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

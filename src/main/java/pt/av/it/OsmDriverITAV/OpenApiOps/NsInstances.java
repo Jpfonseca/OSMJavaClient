@@ -1,9 +1,12 @@
-package pt.av.it.SimpleDriver.OpenApiOps;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV.OpenApiOps;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import pt.av.it.SimpleDriver.Interfaces.NsInstancesInterface;
-import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.OsmDriverITAV.Interfaces.NsInstancesInterface;
+import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 
 /**
  * Network Service Instances related Operations

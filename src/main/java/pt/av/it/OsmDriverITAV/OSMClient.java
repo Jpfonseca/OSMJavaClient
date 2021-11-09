@@ -1,8 +1,20 @@
-package pt.av.it.SimpleDriver;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ * Modified by:
+ * - João Alegria (joao.p@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV;
 import org.json.simple.JSONObject;
-import pt.av.it.SimpleDriver.Interfaces.OSMClientInterface;
-import pt.av.it.SimpleDriver.OpenApiOps.*;
-import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.OsmDriverITAV.Interfaces.OSMClientInterface;
+import pt.av.it.OsmDriverITAV.OpenApiOps.Admin;
+import pt.av.it.OsmDriverITAV.OpenApiOps.AdminOperations;
+import pt.av.it.OsmDriverITAV.OpenApiOps.ApiCalls;
+import pt.av.it.OsmDriverITAV.OpenApiOps.NetSliceInstance;
+import pt.av.it.OsmDriverITAV.OpenApiOps.NetSliceTemplate;
+import pt.av.it.OsmDriverITAV.OpenApiOps.NsInstances;
+import pt.av.it.OsmDriverITAV.OpenApiOps.NsPackages;
+import pt.av.it.OsmDriverITAV.OpenApiOps.VnfPackages;
+import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 
 // Add to jvm for debugging purposes -Djavax.net.debug=SSL,trustmanager,handshake
 
@@ -23,7 +35,7 @@ public class OSMClient extends Admin implements OSMClientInterface {
         //After authenticating sucessfully we can use the assigned token, unfortunately do to the way java handles arguments the Properties Handler is instanced twice :|
 
         uri=uri+"/osm";
-        this.apiCalls= new ApiCalls(new AsyncRequests(uri) , "test");
+        this.apiCalls= new ApiCalls(new AsyncRequests(uri) , this.newToken());
 //        this.vnfPackages= VnfPackages.vnfPackages(apiCalls);
 //        this.nsPackages= NsPackages.nsPackages(apiCalls);
 //        this.nsInstances= NsInstances.nsInstances(apiCalls);

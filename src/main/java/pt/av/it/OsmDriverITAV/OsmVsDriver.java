@@ -1,4 +1,8 @@
-package pt.av.it.SimpleDriver;
+/**
+ * 5Growth-VS Driver INterface.
+ * @author João Alegria (joao.p@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV;
 
 import it.nextworks.nfvmano.catalogue.domainLayer.NspNbiType;
 import it.nextworks.nfvmano.catalogues.template.repo.ConfigurationRuleRepository;
@@ -235,7 +239,9 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                                 try {
                                     response = client.nsInstances.listNSLcmOpOcc(actionId);
                                     actionStatus=(String)response.get("operationState");
-                                    Thread.sleep(30000);
+                                    if(!actionStatus.equals("COMPLETED")){
+                                        Thread.sleep(30000);
+                                    }
                                 } catch (InterruptedException ex) {
                                     java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
                                 }
@@ -263,12 +269,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                         }
                         if(actionId!=null){
                             pendingActions.remove(actionId);
-                            this.addPendingActions(vsi, pendingActions);
+                            this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
                         }
                     }
                 }else{
                     pendingActions.put(ruleId, ruleName);
-                    this.addPendingActions(vsi, pendingActions);
+                    this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
                 }
                 break;
             }
@@ -294,12 +300,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                         }
                         if(actionId!=null){
                             pendingActions.remove(actionId);
-                            this.addPendingActions(vsi, pendingActions);
+                            this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
                         }
                     }
                 }else{
                     pendingActions.put(ruleId, ruleName);
-                    this.addPendingActions(vsi, pendingActions);
+                    this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
                 }
                 
                 break;
@@ -318,7 +324,9 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     try {
                         response = client.nsInstances.listNSLcmOpOcc(actionId);
                         actionStatus=(String)response.get("operationState");
-                        Thread.sleep(30000);
+                        if(!actionStatus.equals("COMPLETED")){
+                            Thread.sleep(30000);
+                        }
                     } catch (InterruptedException ex) {
                         java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -332,7 +340,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 }
 
                 interdomainInfo.put(nsi.getNfvNsId(), response);
-                this.addInterdomainInfo(vsi, interdomainInfo);
+                this.vsRecordService.addInterdomainInfo(vsi.getVsiId(), interdomainInfo);
                 break;
             }
             case "getmtdinfo":{
@@ -349,7 +357,9 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     try {
                         response = client.nsInstances.listNSLcmOpOcc(actionId);
                         actionStatus=(String)response.get("operationState");
-                        Thread.sleep(30000);
+                        if(!actionStatus.equals("COMPLETED")){
+                            Thread.sleep(30000);
+                        }
                     } catch (InterruptedException ex) {
                         java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -363,7 +373,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 }
 
                 mtdInfo.put(nsi.getNfvNsId(), response);
-                this.addMtdInfo(vsi, mtdInfo);
+                this.vsRecordService.addMtdInfo(vsi.getVsiId(), mtdInfo);
                 break;
             }
             default:{
@@ -381,7 +391,9 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     try {
                         response = client.nsInstances.listNSLcmOpOcc(actionId);
                         actionStatus=(String)response.get("operationState");
-                        Thread.sleep(30000);
+                        if(!actionStatus.equals("COMPLETED")){
+                            Thread.sleep(30000);
+                        }
                     } catch (InterruptedException ex) {
                         java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -438,27 +450,14 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
             try {
                 response = client.nsInstances.listNSLcmOpOcc(actionId);
                 actionStatus=(String)response.get("operationState");
-                Thread.sleep(30000);
+                if(!actionStatus.equals("COMPLETED")){
+                    Thread.sleep(30000);
+                }
             } catch (InterruptedException ex) {
                 java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         log.info("Activated MTD in subnet with nsrId '"+nssiId+"'");
-    }
-    
-    private void addPendingActions(VerticalServiceInstance vsi, Map<String,String> info) {
-        vsi.setPendingActions(info);
-        this.vsInstanceRepository.saveAndFlush(vsi);
-    }
-    
-    private void addInterdomainInfo(VerticalServiceInstance vsi, Map<String, JSONObject> info) {
-        vsi.setInterdomainInfo(info);
-        this.vsInstanceRepository.saveAndFlush(vsi);
-    }
-    
-    private void addMtdInfo(VerticalServiceInstance vsi, Map<String, JSONObject> info) {
-        vsi.setMtdInfo(info);
-        this.vsInstanceRepository.saveAndFlush(vsi);
     }
     
 }

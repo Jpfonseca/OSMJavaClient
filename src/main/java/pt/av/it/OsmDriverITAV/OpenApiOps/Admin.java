@@ -1,10 +1,13 @@
-package pt.av.it.SimpleDriver.OpenApiOps;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV.OpenApiOps;
 
 import java.time.Instant;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import pt.av.it.SimpleDriver.Interfaces.AdminInterface;
-import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.OsmDriverITAV.Interfaces.AdminInterface;
+import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 
 public abstract class Admin implements AdminInterface {
 

@@ -1,14 +1,17 @@
-package pt.av.it.SimpleDriver.OpenApiOps;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV.OpenApiOps;
 
 import java.io.File;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import pt.av.it.SimpleDriver.Interfaces.NsPackagesInterface;
-import pt.av.it.SimpleDriver.Requests.AsyncRequests;
-import pt.av.it.SimpleDriver.Requests.Headers;
-import pt.av.it.SimpleDriver.Requests.Serialization;
+import pt.av.it.OsmDriverITAV.Interfaces.NsPackagesInterface;
+import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
+import pt.av.it.OsmDriverITAV.Requests.Headers;
+import pt.av.it.OsmDriverITAV.Requests.Serialization;
 
 public class NsPackages  implements NsPackagesInterface {
     private static NsPackages instance;

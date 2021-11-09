@@ -1,12 +1,15 @@
-package pt.av.it.SimpleDriver.OpenApiOps;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV.OpenApiOps;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.av.it.SimpleDriver.Interfaces.NetSliceInstanceInterface;
-import pt.av.it.SimpleDriver.OsmVsDriver;
-import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.OsmDriverITAV.Interfaces.NetSliceInstanceInterface;
+import pt.av.it.OsmDriverITAV.OsmVsDriver;
+import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 
 public class NetSliceInstance implements NetSliceInstanceInterface {
     

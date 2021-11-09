@@ -1,4 +1,7 @@
-package pt.av.it.SimpleDriver.Requests;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV.Requests;
 
 import java.io.File;
 import java.io.IOException;

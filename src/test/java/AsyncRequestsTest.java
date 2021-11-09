@@ -1,11 +1,14 @@
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.simple.JSONObject;
 import org.junit.Test;
-import pt.av.it.SimpleDriver.Requests.AsyncRequests;
-import pt.av.it.SimpleDriver.Requests.Headers;
+import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
+import pt.av.it.OsmDriverITAV.Requests.Headers;
 
 public class AsyncRequestsTest {
     @Test

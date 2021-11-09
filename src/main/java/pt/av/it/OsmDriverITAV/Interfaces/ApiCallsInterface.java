@@ -1,6 +1,9 @@
-package pt.av.it.SimpleDriver.Interfaces;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV.Interfaces;
 
-import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 
 public interface ApiCallsInterface {
     String currentTOKEN_ID="";

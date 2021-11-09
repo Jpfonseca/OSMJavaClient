@@ -1,9 +1,11 @@
-package pt.av.it.SimpleDriver.Requests;
-
-import org.json.simple.JSONObject;
-import org.yaml.snakeyaml.Yaml;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV.Requests;
 
 import java.util.Map;
+import org.json.simple.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
 public class Serialization {
     

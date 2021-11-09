@@ -1,3 +1,6 @@
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
 import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 import org.junit.After;
@@ -5,12 +8,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
-import pt.av.it.SimpleDriver.Requests.OsmClientProperties;
-import pt.av.it.SimpleDriver.Requests.PropertiesHandler;
+import pt.av.it.OsmDriverITAV.Requests.OsmClientProperties;
+import pt.av.it.OsmDriverITAV.Requests.PropertiesHandler;
 
 @DisplayName("Admin Test Scenario")
 public class AdminTest {
-    private pt.av.it.SimpleDriver.OSMClient osmClient;
+    private pt.av.it.OsmDriverITAV.OSMClient osmClient;
     private String token;
     private static final Logger logger = Logger.getLogger(AdminTest.class.getName());
 
@@ -23,7 +26,7 @@ public class AdminTest {
         assert(handler.getNumberofOsmClients()>0);
         if(handler.getNumberofOsmClients()>0){
             properties=handler.getOsmClientProperties(handler.getNumberofOsmClients()-1);
-            osmClient=new pt.av.it.SimpleDriver.OSMClient(properties.getUri(), properties.getUser(), properties.getPassword(), properties.getProject(), properties.getVimAccount());
+            osmClient=new pt.av.it.OsmDriverITAV.OSMClient(properties.getUri(), properties.getUser(), properties.getPassword(), properties.getProject(), properties.getVimAccount());
             osmClient.newCurrentToken();
             token=osmClient.getcurrentTOKEN_ID();
         }

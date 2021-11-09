@@ -1,8 +1,11 @@
-package pt.av.it.SimpleDriver.OpenApiOps;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV.OpenApiOps;
 
 
-import pt.av.it.SimpleDriver.Interfaces.ApiCallsInterface;
-import pt.av.it.SimpleDriver.Requests.AsyncRequests;
+import pt.av.it.OsmDriverITAV.Interfaces.ApiCallsInterface;
+import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 
 public class ApiCalls implements ApiCallsInterface {
 

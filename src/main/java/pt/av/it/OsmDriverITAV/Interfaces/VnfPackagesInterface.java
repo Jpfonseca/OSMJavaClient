@@ -1,9 +1,11 @@
-package pt.av.it.SimpleDriver.Interfaces;
+/**
+ * @author João Fonseca (jpedrofonseca@av.it.pt)
+ */
+package pt.av.it.OsmDriverITAV.Interfaces;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.File;
 
 public interface VnfPackagesInterface {
     /**
