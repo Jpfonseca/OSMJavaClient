@@ -7,10 +7,10 @@
     <groupId>pt.av.it</groupId>
     <artifactId>OsmDriverITAV</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <developers>
+    <!--<developers>
         <developer>João Fonseca (jpedrofonseca@av.it.pt)</developer>
         <developer>João Alegria (joao.p@av.it.pt)</developer>
-    </developers>
+    </developers>-->
     <build>
         <plugins>
             <plugin>

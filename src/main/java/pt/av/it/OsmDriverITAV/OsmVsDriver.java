@@ -1,7 +1,3 @@
-/**
- * 5Growth-VS Driver INterface.
- * @author João Alegria (joao.p@av.it.pt)
- */
 package pt.av.it.OsmDriverITAV;
 
 import it.nextworks.nfvmano.catalogue.domainLayer.NspNbiType;
@@ -19,8 +15,6 @@ import it.nextworks.nfvmano.sebastian.nsmf.messages.ConfigureNsiRequest;
 import it.nextworks.nfvmano.sebastian.nsmf.messages.CreateNsiIdRequest;
 import it.nextworks.nfvmano.sebastian.nsmf.messages.InstantiateNsiRequest;
 import it.nextworks.nfvmano.sebastian.nsmf.messages.ModifyNsiRequest;
-import it.nextworks.nfvmano.sebastian.nsmf.messages.NetworkSliceStatusChange;
-import it.nextworks.nfvmano.sebastian.nsmf.messages.NetworkSliceStatusChangeNotification;
 import it.nextworks.nfvmano.sebastian.nsmf.messages.TerminateNsiRequest;
 import it.nextworks.nfvmano.sebastian.record.VsRecordService;
 import it.nextworks.nfvmano.sebastian.record.elements.NetworkSliceInstance;
@@ -28,7 +22,6 @@ import it.nextworks.nfvmano.sebastian.record.elements.NetworkSliceStatus;
 import it.nextworks.nfvmano.sebastian.record.elements.VerticalServiceInstance;
 import it.nextworks.nfvmano.sebastian.record.repo.VerticalServiceInstanceRepository;
 import it.nextworks.nfvmano.sebastian.vsfm.VsLcmService;
-import it.nextworks.nfvmano.sebastian.vsfm.messages.Day2ActionRequest;
 import it.nextworks.nfvmano.sebastian.vsfm.sbi.NsmfLcmOperationPollingManager;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.logging.Level;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -44,8 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * @author joaoalegria
+ * 5Growth-VS Driver INterface.
+ * @author João Alegria (joao.p@av.it.pt)
  */
 public class OsmVsDriver implements NsmfLcmProviderInterface{
     
@@ -59,11 +53,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
     private ConfigurationRuleRepository configurationRuleRepository;
     private NsmfLcmOperationPollingManager pollingManager;
     private VsRecordService vsRecordService;
-    private static int tunnelPeerCount=1;
     private String vimAccount;
     private String uri;
     private VsLcmService vsLcmService;
     private VerticalServiceInstanceRepository vsInstanceRepository;
+    private List<String> processedActions=new ArrayList<String>();
+    
 
     public OsmVsDriver(String uri,String username, String password, String project_id,String vimAccount, ConfigurationRuleRepository configurationRuleRepository,NsmfLcmOperationPollingManager nsmfLcmOperationPollingManager, VsRecordService vsRecordService, VsLcmService vsLcmService, VerticalServiceInstanceRepository vsInstanceRepository) {
         client = new OSMClient(uri, username, password, project_id, vimAccount);
@@ -182,6 +177,42 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     break;
             }
             
+            List<JSONObject> operations = this.getNsiOperations(nsi);
+            if(!operations.isEmpty()){
+                boolean allConfigured=true;
+                for(JSONObject op : operations){
+                    if(!this.processedActions.contains((String)op.get("id"))){
+                        this.processedActions.add((String)op.get("id"));
+                        if(((String)op.get("status")).equals("COMPLETED")){
+                            VerticalServiceInstance vsi = this.vsRecordService.getVsInstancesFromNetworkSliceSubnet(nsi.getNsiId()).get(0);
+                            Map<String, JSONObject> interdomainInfo = vsi.getInterdomainInfo();
+                            Map<String, JSONObject> mtdInfo = vsi.getMtdInfo();
+                            switch((String)op.get("name")){
+                                case "getvnfinfo":{
+                                    interdomainInfo.put(nsi.getNfvNsId(), response);
+                                    this.vsRecordService.addInterdomainInfo(vsi.getVsiId(), interdomainInfo);
+                                    break;
+                                }
+                                case "getmtdinfo":{
+                                    mtdInfo.put(nsi.getNfvNsId(), response);
+                                    this.vsRecordService.addMtdInfo(vsi.getVsiId(), mtdInfo);
+                                    break;
+                                }
+                            }
+                            nsi.setStatus(NetworkSliceStatus.CONFIGURED);
+                        }else{
+                            allConfigured=false;
+                            this.processedActions.remove((String)op.get("id"));
+                            nsi.setStatus(NetworkSliceStatus.CONFIGURING);
+                        }
+                        break;
+                    }
+                }
+                if(allConfigured){
+                    nsi.setStatus(NetworkSliceStatus.CONFIGURED);
+                }
+            }
+            
             List<NetworkSliceInstance> nsis = new ArrayList<NetworkSliceInstance>();
             nsis.add(nsi);
             return nsis;
@@ -218,95 +249,118 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
         
         switch(ruleName){
             case "addpeer":{
-                if(interdomainInfo.size()==vsi.getNssis().size()){
+//                if(interdomainInfo.size()==vsi.getNssis().size()){
 
-                    for(String nssiId2 : interdomainInfo.keySet()){                  
-                        if(!nssiId.equals(nssiId2)){
-                            log.info("Subnet with nsrId '"+nssiId+"' is receiving information from the Subnet with nsrId '"+nssiId2+"'");
-
-                            JSONObject actionRequest = new JSONObject();
-                            actionRequest.put("primitive", "addpeer");
-                            Map<String,String> actionParameters = new HashMap<String,String>();
-                            actionParameters.put("peer_key", (String)interdomainInfo.get(nssiId2).get("publicKey"));
-                            actionParameters.put("peer_endpoint", (String)interdomainInfo.get(nssiId2).get("vnfIp"));
-                            actionParameters.put("peer_network", "10.100.100.0/24");
-                            actionRequest.put("primitive_params", actionParameters);
-                            actionRequest.put("member_vnf_index", "1");
-                            JSONObject response = client.nsInstances.actionNSi(nssiId, actionRequest);
-                            String actionId = (String)response.get("id");
-                            String actionStatus="RUNNING";
-                            while(!actionStatus.equals("COMPLETED")){
-                                try {
-                                    response = client.nsInstances.listNSLcmOpOcc(actionId);
-                                    actionStatus=(String)response.get("operationState");
-                                    if(!actionStatus.equals("COMPLETED")){
-                                        Thread.sleep(30000);
-                                    }
-                                } catch (InterruptedException ex) {
-                                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            }
-
-                            log.info("Action 'addpeer' executed with response: "+response.toString());
-                        }
+                while(interdomainInfo.size()!=vsi.getNssis().size()){
+                    log.info("Waiting for all Interdomain info");
+                    try {
+                        Thread.sleep(30000);
+                        vsi = this.vsRecordService.getVsInstancesFromNetworkSliceSubnet(request.getNsiId()).get(0);
+                        interdomainInfo = vsi.getInterdomainInfo();
+                    } catch (InterruptedException ex) {
+                        java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
-                    if(pendingActions.size()>0){
-                        String actionId=null;
-                        for(Entry<String, String> action : pendingActions.entrySet()){
-                            if(action.getValue().equals("addpeer")){
-                                actionId=action.getKey();
-                                Day2ActionRequest message = new Day2ActionRequest(vsi.getVsiId(), actionId, new HashMap<String, String>());
-                                try {
-                                    this.vsLcmService.execDayTwoAction(message, "");
-                                } catch (NotExistingEntityException ex) {
-                                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                                } catch (NotPermittedOperationException ex) {
-                                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                                break;
-                            }
-                        }
-                        if(actionId!=null){
-                            pendingActions.remove(actionId);
-                            this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
-                        }
-                    }
-                }else{
-                    pendingActions.put(ruleId, ruleName);
-                    this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
                 }
+
+                for(String nssiId2 : interdomainInfo.keySet()){                  
+                    if(!nssiId.equals(nssiId2)){
+                        log.info("Subnet with nsrId '"+nssiId+"' is receiving information from the Subnet with nsrId '"+nssiId2+"'");
+
+                        JSONObject actionRequest = new JSONObject();
+                        actionRequest.put("primitive", "addpeer");
+                        Map<String,String> actionParameters = new HashMap<String,String>();
+                        actionParameters.put("peer_key", (String)interdomainInfo.get(nssiId2).get("publicKey"));
+                        actionParameters.put("peer_endpoint", (String)interdomainInfo.get(nssiId2).get("vnfIp"));
+                        actionParameters.put("peer_network", "10.100.100.0/24");
+                        actionRequest.put("primitive_params", actionParameters);
+                        actionRequest.put("member_vnf_index", "1");
+                        JSONObject response = client.nsInstances.actionNSi(nssiId, actionRequest);
+                        String actionId = (String)response.get("id");
+//                        String actionStatus="RUNNING";
+//                        while(!actionStatus.equals("COMPLETED")){
+//                            try {
+//                                response = client.nsInstances.listNSLcmOpOcc(actionId);
+//                                actionStatus=(String)response.get("operationState");
+//                                if(!actionStatus.equals("COMPLETED")){
+//                                    Thread.sleep(30000);
+//                                }
+//                            } catch (InterruptedException ex) {
+//                                java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                            }
+//                        }
+//
+//                        log.info("Action 'addpeer' executed with response: "+response.toString());
+                    }
+                }
+                    
+//                    if(pendingActions.size()>0){
+//                        String actionId=null;
+//                        for(Entry<String, String> action : pendingActions.entrySet()){
+//                            if(action.getValue().equals("addpeer")){
+//                                actionId=action.getKey();
+//                                Day2ActionRequest message = new Day2ActionRequest(vsi.getVsiId(), actionId, new HashMap<String, String>());
+//                                try {
+//                                    this.vsLcmService.execDayTwoAction(message, "");
+//                                } catch (NotExistingEntityException ex) {
+//                                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                                } catch (NotPermittedOperationException ex) {
+//                                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                                }
+//                                break;
+//                            }
+//                        }
+//                        if(actionId!=null){
+//                            pendingActions.remove(actionId);
+//                            this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
+//                        }
+//                    }
+//                }else{
+//                    pendingActions.put(ruleId, ruleName);
+//                    this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
+//                }
                 break;
             }
             case "activatemtd":{
-                if(mtdInfo.size()==vsi.getNssis().size()){
-                    this.activateMTD(vsi, nssiId);
-                    
-                    if(pendingActions.size()>0){
-                        String actionId=null;
-                        for(Entry<String, String> action : pendingActions.entrySet()){
-                            if(action.getValue().equals("activatemtd")){
-                                actionId=action.getKey();
-                                Day2ActionRequest message = new Day2ActionRequest(vsi.getVsiId(), actionId, new HashMap<String, String>());
-                                try {
-                                    this.vsLcmService.execDayTwoAction(message, "");
-                                } catch (NotExistingEntityException ex) {
-                                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                                } catch (NotPermittedOperationException ex) {
-                                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                                break;
-                            }
-                        }
-                        if(actionId!=null){
-                            pendingActions.remove(actionId);
-                            this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
-                        }
+//                if(mtdInfo.size()==vsi.getNssis().size()){
+
+                while(mtdInfo.size()!=vsi.getNssis().size()){
+                    log.info("Waiting for all MTD info.");
+                    try {
+                        Thread.sleep(30000);
+                        vsi = this.vsRecordService.getVsInstancesFromNetworkSliceSubnet(request.getNsiId()).get(0);
+                        mtdInfo = vsi.getMtdInfo();
+                    } catch (InterruptedException ex) {
+                        java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }else{
-                    pendingActions.put(ruleId, ruleName);
-                    this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
                 }
+                
+                this.activateMTD(vsi, nssiId);
+                    
+//                    if(pendingActions.size()>0){
+//                        String actionId=null;
+//                        for(Entry<String, String> action : pendingActions.entrySet()){
+//                            if(action.getValue().equals("activatemtd")){
+//                                actionId=action.getKey();
+//                                Day2ActionRequest message = new Day2ActionRequest(vsi.getVsiId(), actionId, new HashMap<String, String>());
+//                                try {
+//                                    this.vsLcmService.execDayTwoAction(message, "");
+//                                } catch (NotExistingEntityException ex) {
+//                                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                                } catch (NotPermittedOperationException ex) {
+//                                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                                }
+//                                break;
+//                            }
+//                        }
+//                        if(actionId!=null){
+//                            pendingActions.remove(actionId);
+//                            this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
+//                        }
+//                    }
+//                }else{
+//                    pendingActions.put(ruleId, ruleName);
+//                    this.vsRecordService.addPendingActions(vsi.getVsiId(), pendingActions);
+//                }
                 
                 break;
             }
@@ -319,28 +373,28 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 JSONObject response = client.nsInstances.actionNSi(nsi.getNfvNsId(), actionRequest);
                 String actionId = (String)response.get("id");
 
-                String actionStatus="RUNNING";
-                while(!actionStatus.equals("COMPLETED")){
-                    try {
-                        response = client.nsInstances.listNSLcmOpOcc(actionId);
-                        actionStatus=(String)response.get("operationState");
-                        if(!actionStatus.equals("COMPLETED")){
-                            Thread.sleep(30000);
-                        }
-                    } catch (InterruptedException ex) {
-                        java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+//                String actionStatus="RUNNING";
+//                while(!actionStatus.equals("COMPLETED")){
+//                    try {
+//                        response = client.nsInstances.listNSLcmOpOcc(actionId);
+//                        actionStatus=(String)response.get("operationState");
+//                        if(!actionStatus.equals("COMPLETED")){
+//                            Thread.sleep(30000);
+//                        }
+//                    } catch (InterruptedException ex) {
+//                        java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                }
 
-                JSONParser parser = new JSONParser();
-                try {
-                    response = (JSONObject) parser.parse((String)((JSONObject)response.get("detailed-status")).get("output"));
-                } catch (ParseException ex) {
-                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                interdomainInfo.put(nsi.getNfvNsId(), response);
-                this.vsRecordService.addInterdomainInfo(vsi.getVsiId(), interdomainInfo);
+//                JSONParser parser = new JSONParser();
+//                try {
+//                    response = (JSONObject) parser.parse((String)((JSONObject)response.get("detailed-status")).get("output"));
+//                } catch (ParseException ex) {
+//                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//
+//                interdomainInfo.put(nsi.getNfvNsId(), response);
+//                this.vsRecordService.addInterdomainInfo(vsi.getVsiId(), interdomainInfo);
                 break;
             }
             case "getmtdinfo":{
@@ -352,28 +406,28 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 JSONObject response = client.nsInstances.actionNSi(nsi.getNfvNsId(), actionRequest);
                 String actionId = (String)response.get("id");
 
-                String actionStatus="RUNNING";
-                while(!actionStatus.equals("COMPLETED")){
-                    try {
-                        response = client.nsInstances.listNSLcmOpOcc(actionId);
-                        actionStatus=(String)response.get("operationState");
-                        if(!actionStatus.equals("COMPLETED")){
-                            Thread.sleep(30000);
-                        }
-                    } catch (InterruptedException ex) {
-                        java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+//                String actionStatus="RUNNING";
+//                while(!actionStatus.equals("COMPLETED")){
+//                    try {
+//                        response = client.nsInstances.listNSLcmOpOcc(actionId);
+//                        actionStatus=(String)response.get("operationState");
+//                        if(!actionStatus.equals("COMPLETED")){
+//                            Thread.sleep(30000);
+//                        }
+//                    } catch (InterruptedException ex) {
+//                        java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                }
 
-                JSONParser parser = new JSONParser();
-                try {
-                    response = (JSONObject) parser.parse((String)((JSONObject)response.get("detailed-status")).get("output"));
-                } catch (ParseException ex) {
-                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                mtdInfo.put(nsi.getNfvNsId(), response);
-                this.vsRecordService.addMtdInfo(vsi.getVsiId(), mtdInfo);
+//                JSONParser parser = new JSONParser();
+//                try {
+//                    response = (JSONObject) parser.parse((String)((JSONObject)response.get("detailed-status")).get("output"));
+//                } catch (ParseException ex) {
+//                    java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//
+//                mtdInfo.put(nsi.getNfvNsId(), response);
+//                this.vsRecordService.addMtdInfo(vsi.getVsiId(), mtdInfo);
                 break;
             }
             default:{
@@ -386,24 +440,25 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 JSONObject response = client.nsInstances.actionNSi(nsi.getNfvNsId(), actionRequest);
                 String actionId = (String)response.get("id");
 
-                String actionStatus="RUNNING";
-                while(!actionStatus.equals("COMPLETED")){
-                    try {
-                        response = client.nsInstances.listNSLcmOpOcc(actionId);
-                        actionStatus=(String)response.get("operationState");
-                        if(!actionStatus.equals("COMPLETED")){
-                            Thread.sleep(30000);
-                        }
-                    } catch (InterruptedException ex) {
-                        java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+//                String actionStatus="RUNNING";
+//                while(!actionStatus.equals("COMPLETED")){
+//                    try {
+//                        response = client.nsInstances.listNSLcmOpOcc(actionId);
+//                        actionStatus=(String)response.get("operationState");
+//                        if(!actionStatus.equals("COMPLETED")){
+//                            Thread.sleep(30000);
+//                        }
+//                    } catch (InterruptedException ex) {
+//                        java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                }
                 break;
             }    
         }
         
-        NetworkSliceStatusChangeNotification notification = new NetworkSliceStatusChangeNotification(request.getNsiId(), NetworkSliceStatusChange.NSI_CONFIGURED, true);
-        this.vsLcmService.notifyNetworkSliceStatusChange(notification);
+//        NetworkSliceStatusChangeNotification notification = new NetworkSliceStatusChangeNotification(request.getNsiId(), NetworkSliceStatusChange.NSI_CONFIGURED, true);
+//        this.vsLcmService.notifyNetworkSliceStatusChange(notification);
+        this.pollingManager.addOperation(UUID.randomUUID().toString(), OperationStatus.SUCCESSFULLY_DONE, request.getNsiId(), "NSI_CONFIGURATION", domainId, NspNbiType.OSM);
     }
     
     private void activateMTD(VerticalServiceInstance vsi, String nssiId){
@@ -458,6 +513,34 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
             }
         }
         log.info("Activated MTD in subnet with nsrId '"+nssiId+"'");
+    }
+
+    private List<JSONObject> getNsiOperations(NetworkSliceInstance nsi) {
+        JSONArray operations = this.client.nsInstances.listNSLcmOpOccs();
+        List<JSONObject> finalOperations = new ArrayList<JSONObject>();
+        for(int i=0; i<operations.size();i++){
+            JSONObject op = (JSONObject) operations.get(i);
+            if(op.get("nsInstanceId").equals(nsi.getNfvNsId())){
+                if(op.get("lcmOperationType").equals("action")){
+                    JSONObject action = new JSONObject();
+                    action.put("name", (String)((JSONObject)op.get("operationParams")).get("primitive"));
+                    action.put("id", (String)op.get("id"));
+                    action.put("status", (String)op.get("operationState"));
+                    
+                    if(((String)op.get("operationState")).equals("COMPLETED")){
+                        JSONParser parser = new JSONParser();
+                        try {
+                            action.put("output",(JSONObject) parser.parse((String)((JSONObject)op.get("detailed-status")).get("output")));
+                        } catch (ParseException ex) {
+                            java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    
+                    finalOperations.add(action);
+                }
+            }
+        }
+        return finalOperations;
     }
     
 }
