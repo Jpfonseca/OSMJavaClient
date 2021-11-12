@@ -159,6 +159,8 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
             if(response == null)
                 throw new FailedOperationException("Error querying network slice instance");
             
+            List<NetworkSliceInstance> nsis = new ArrayList<NetworkSliceInstance>();
+            
             NetworkSliceInstance nsi = new NetworkSliceInstance();
             nsi.setNsiId(nsiID);
             nsi.setNfvNsId((String)((List<JSONObject>)response.get("nsr-ref-list")).get(0).get("nsr-ref"));
@@ -171,10 +173,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     break;
                 case "terminating":
                     nsi.setStatus(NetworkSliceStatus.TERMINATING);
-                    break;
+                    nsis.add(nsi);
+                    return nsis;
                 case "terminated":
                     nsi.setStatus(NetworkSliceStatus.TERMINATED);
-                    break;
+                    nsis.add(nsi);
+                    return nsis;
             }
             
             List<JSONObject> operations = this.getNsiOperations(nsi);
@@ -213,7 +217,6 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 }
             }
             
-            List<NetworkSliceInstance> nsis = new ArrayList<NetworkSliceInstance>();
             nsis.add(nsi);
             return nsis;
         }
