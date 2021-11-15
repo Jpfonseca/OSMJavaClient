@@ -193,12 +193,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                             Map<String, JSONObject> mtdInfo = vsi.getMtdInfo();
                             switch((String)op.get("name")){
                                 case "getvnfinfo":{
-                                    interdomainInfo.put(nsi.getNfvNsId(), response);
+                                    interdomainInfo.put(nsi.getNfvNsId(), (JSONObject)op.get("output"));
                                     this.vsRecordService.addInterdomainInfo(vsi.getVsiId(), interdomainInfo);
                                     break;
                                 }
                                 case "getmtdinfo":{
-                                    mtdInfo.put(nsi.getNfvNsId(), response);
+                                    mtdInfo.put(nsi.getNfvNsId(), (JSONObject)op.get("output"));
                                     this.vsRecordService.addMtdInfo(vsi.getVsiId(), mtdInfo);
                                     break;
                                 }
@@ -535,7 +535,8 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                         try {
                             action.put("output",(JSONObject) parser.parse((String)((JSONObject)op.get("detailed-status")).get("output")));
                         } catch (ParseException ex) {
-                            java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+//                            java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
+                            java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.WARNING, null, "Error while parsing action output. Not in JSON format.");
                         }
                     }
                     
