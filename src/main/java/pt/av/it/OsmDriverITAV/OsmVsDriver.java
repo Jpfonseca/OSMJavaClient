@@ -361,7 +361,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                             Map<String,String> actionParameters = new HashMap<String,String>();
                             actionParameters.put("peer_key", (String)auxInterdomainInfo.get(nssiId2).get("public_key"));
                             actionParameters.put("peer_endpoint", (String)auxInterdomainInfo.get(nssiId2).get("endpoint"));
-                            actionParameters.put("peer_allowed_network", (String)auxInterdomainInfo.get(nssiId2).get("peer_allowed_network"));
+//                            actionParameters.put("peer_allowed_network", (String)auxInterdomainInfo.get(nssiId2).get("peer_allowed_network"));
                             for(Entry<String,String> entry:params.entrySet()){
                                 actionParameters.put(entry.getKey(), entry.getValue());
                             }
