@@ -500,7 +500,16 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     for(String nssiId2 : auxInterdomainInfo.keySet()){                  
                         if(!nssiNfvId.equals(nssiId2)){
                             actionParameters.put("gw-address",(String)auxMtdInfo.get(nssiNfvId).get("mtdPublicIp"));
-                            actionParameters.put("allowed-ips",(String)auxInterdomainInfo.get(nssiId2).get("endpoint")+"/32");
+                            
+                            String peerIp;
+                            
+                            if(auxInterdomainInfo.get(nssiId2).containsKey("publicEndpoint")){
+                                peerIp=(String)auxInterdomainInfo.get(nssiId2).get("publicEndpoint");
+                            }else{
+                                peerIp=(String)auxInterdomainInfo.get(nssiId2).get("internalEndpoint");
+                            }
+                            
+                            actionParameters.put("allowed-ips",peerIp+"/32");
                             break;
                         }
                     }
