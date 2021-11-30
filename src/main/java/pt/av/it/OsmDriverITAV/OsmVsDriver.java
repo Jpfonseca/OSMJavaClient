@@ -55,6 +55,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
     private VsLcmService vsLcmService;
     private VerticalServiceInstanceRepository vsInstanceRepository;
     private List<String> processedActions=new ArrayList<String>();
+    private Integer poolingTime=10;
     
 
     public OsmVsDriver(String uri,String username, String password, String project_id,String vimAccount, ConfigurationRuleRepository configurationRuleRepository,NsmfLcmOperationPollingManager nsmfLcmOperationPollingManager, VsRecordService vsRecordService, VsLcmService vsLcmService, VerticalServiceInstanceRepository vsInstanceRepository) {
@@ -343,7 +344,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     while(auxInterdomainInfo.size()!=auxVsi.getNssis().size()){
                         log.info("Waiting for all Interdomain info");
                         try {
-                            Thread.sleep(30000);
+                            Thread.sleep(poolingTime*1000);
                             auxVsi = vsRecordService.getVsInstancesFromNetworkSliceSubnet(nssiId).get(0);
                             auxInterdomainInfo = auxVsi.getInterdomainInfo();
                         } catch (InterruptedException ex) {
@@ -381,7 +382,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     while((auxMtdInfo.size()!=auxVsi.getNssis().size()) || (auxInterdomainInfo.size()!=auxVsi.getNssis().size())){
                         log.info("Waiting for all MTD info.");
                         try {
-                            Thread.sleep(30000);
+                            Thread.sleep(poolingTime*1000);
                             auxVsi = vsRecordService.getVsInstancesFromNetworkSliceSubnet(nssiId).get(0);
                             auxInterdomainInfo = auxVsi.getInterdomainInfo();
                             auxMtdInfo = auxVsi.getMtdInfo();
@@ -407,7 +408,19 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                         }
                         
                         if(mode == 3){
-                            actionParameters.put("ip-peer1",(String)auxInterdomainInfo.get(tmpNssiId).get("endpoint"));
+                            
+                            String peerIp;
+                            if(tmpNssiId.equals(this.nssiId)){
+                                peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("internalEndpoint");
+                            }else{
+                                if(auxInterdomainInfo.containsKey("publicEndpoint")){
+                                    peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("publicEndpoint");
+                                }else{
+                                    peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("internalEndpoint");
+                                }
+                            }
+                            
+                            actionParameters.put("ip-peer1",peerIp);
                             actionParameters.put("mac-peer1",(String)auxInterdomainInfo.get(tmpNssiId).get("vnfMAC"));
                             actionParameters.put("mac-gw-peer1",(String)mtdInfo.get("gwMAC"));
                             actionParameters.put("ip-mtd-peer1-internal",(String)mtdInfo.get("mtdInternalIp"));
@@ -415,7 +428,19 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                             actionParameters.put("mac-mtd-peer1",(String)mtdInfo.get("mtdMAC"));
 
                         }else{
-                            actionParameters.put("ip-peer2",(String)auxInterdomainInfo.get(tmpNssiId).get("vnfIp"));
+                            
+                            String peerIp;
+                            if(tmpNssiId.equals(this.nssiId)){
+                                peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("internalEndpoint");
+                            }else{
+                                if(auxInterdomainInfo.containsKey("publicEndpoint")){
+                                    peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("publicEndpoint");
+                                }else{
+                                    peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("internalEndpoint");
+                                }
+                            }
+                            
+                            actionParameters.put("ip-peer2",peerIp);
                             actionParameters.put("mac-peer2",(String)auxInterdomainInfo.get(tmpNssiId).get("vnfMAC"));
                             actionParameters.put("mac-gw-peer2",(String)auxInterdomainInfo.get(tmpNssiId).get("gwMAC"));
                             actionParameters.put("ip-mtd-peer2-internal",(String)mtdInfo.get("mtdInternalIp"));
@@ -442,7 +467,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     while((auxMtdInfo.size()!=auxVsi.getNssis().size()) || (auxInterdomainInfo.size()!=auxVsi.getNssis().size())){
                         log.info("Waiting for all MTD info.");
                         try {
-                            Thread.sleep(30000);
+                            Thread.sleep(poolingTime*1000);
                             auxVsi = vsRecordService.getVsInstancesFromNetworkSliceSubnet(nssiId).get(0);
                             auxInterdomainInfo = auxVsi.getInterdomainInfo();
                             auxMtdInfo = auxVsi.getMtdInfo();

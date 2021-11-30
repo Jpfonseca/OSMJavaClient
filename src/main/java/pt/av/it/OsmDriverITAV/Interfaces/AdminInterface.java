@@ -24,4 +24,5 @@ public interface AdminInterface {
     String deleteTokenById(String tokenID);
 
     boolean isCurrentTokenValid();
+    
 }

@@ -8,6 +8,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import pt.av.it.OsmDriverITAV.Interfaces.ApiCallsInterface;
 import pt.av.it.OsmDriverITAV.Interfaces.VnfPackagesInterface;
 import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 import pt.av.it.OsmDriverITAV.Requests.Headers;
@@ -17,14 +18,14 @@ public class VnfPackages implements VnfPackagesInterface {
     private static VnfPackages instance;
     
     private AsyncRequests http;
-    private ApiCalls apiCalls;
+    private ApiCallsInterface apiCalls;
     
-    public VnfPackages(ApiCalls apiCalls){
+    public VnfPackages(ApiCallsInterface apiCalls){
         this.apiCalls=apiCalls;
         this.http=apiCalls.getHttp();
     }
 
-    public static VnfPackages vnfPackages( ApiCalls apiCalls){
+    public static VnfPackages vnfPackages( ApiCallsInterface apiCalls){
         if(instance==null){
             instance=new VnfPackages(apiCalls);
         }

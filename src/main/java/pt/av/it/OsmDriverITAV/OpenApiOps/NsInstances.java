@@ -5,6 +5,7 @@ package pt.av.it.OsmDriverITAV.OpenApiOps;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import pt.av.it.OsmDriverITAV.Interfaces.ApiCallsInterface;
 import pt.av.it.OsmDriverITAV.Interfaces.NsInstancesInterface;
 import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 
@@ -15,14 +16,14 @@ public class NsInstances implements NsInstancesInterface {
     private static NsInstances instance;
     
     private AsyncRequests http;
-    private ApiCalls apiCalls;
+    private ApiCallsInterface apiCalls;
     
-    public NsInstances(ApiCalls apiCalls) {
+    public NsInstances(ApiCallsInterface apiCalls) {
         this.http=apiCalls.getHttp();
         this.apiCalls=apiCalls;
     }
 
-    public static NsInstances nsInstances( ApiCalls apiCalls){
+    public static NsInstances nsInstances( ApiCallsInterface apiCalls){
         if(instance==null){
             instance=new NsInstances(apiCalls);
         }

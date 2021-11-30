@@ -7,31 +7,34 @@ import java.time.Instant;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import pt.av.it.OsmDriverITAV.Interfaces.AdminInterface;
+import pt.av.it.OsmDriverITAV.Interfaces.ApiCallsInterface;
 import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 
-public abstract class Admin implements AdminInterface {
+public abstract class Admin implements AdminInterface, ApiCallsInterface {
 
     private final AsyncRequests http;
     private String currentTOKEN_ID;
+    private Double tokenExpirationTimestamp;
     private String payload;
-public Admin(AsyncRequests asyncRequests, String username, String password, String project_id){
+    
+    public Admin(AsyncRequests asyncRequests, String username, String password, String project_id){
 
-    this.http=asyncRequests;
-    payload="{"+
-            " \"username\": \""+username+"\"," +
-            " \"password\": \""+password+"\"," +
-            " \"project_id\": \""+project_id+"\"" +
-            "}";
+        this.http=asyncRequests;
+        this.payload="{"+
+                " \"username\": \""+username+"\"," +
+                " \"password\": \""+password+"\"," +
+                " \"project_id\": \""+project_id+"\"" +
+                "}";
 
-    //System.out.println(versionInfo());
+        //System.out.println(versionInfo());
 
-    /*JSONObject response = http.response(http.post("/admin/v1/tokens", , payload, ""));
-    this.currentTOKEN_ID= (String) ((JSONObject) response.get("message")).get("id");
-    System.out.println(this.currentTOKEN_ID);*/
+        /*JSONObject response = http.response(http.post("/admin/v1/tokens", , payload, ""));
+        this.currentTOKEN_ID= (String) ((JSONObject) response.get("message")).get("id");
+        System.out.println(this.currentTOKEN_ID);*/
 
-}
+    }
 
-    public Admin(ApiCalls apiCalls){
+    public Admin(ApiCallsInterface apiCalls){
         this.http=apiCalls.getHttp();
     }
 
@@ -47,7 +50,7 @@ public Admin(AsyncRequests asyncRequests, String username, String password, Stri
      */
     public JSONArray listAllTokensInfo(){
         JSONArray answer=null;
-        JSONObject response=http.response(http.get("/admin/v1/tokens", getcurrentTOKEN_ID()));
+        JSONObject response=http.response(http.get("/admin/v1/tokens", getCurrentTOKEN_ID()));
         if((int)response.get("status_code")==200){
             answer= (JSONArray) response.get("message");
         }
@@ -62,8 +65,6 @@ public Admin(AsyncRequests asyncRequests, String username, String password, Stri
     public JSONObject newCurrentToken(){
         JSONObject response=null;
         response = http.response(http.post("/admin/v1/tokens", payload, ""));
-        String newTOKEN_ID= (String) ((JSONObject) response.get("message")).get("id");
-        setCurrentTOKEN_ID(newTOKEN_ID);
         return response;
     }
 
@@ -74,7 +75,7 @@ public Admin(AsyncRequests asyncRequests, String username, String password, Stri
      */
     public String deleteCurrentToken(){
         String answer=null;
-        JSONObject response=http.response(http.delete("/admin/v1/tokens", getcurrentTOKEN_ID()));
+        JSONObject response=http.response(http.delete("/admin/v1/tokens", getCurrentTOKEN_ID()));
         if((int)response.get("status_code")==200){
             answer= (String) response.get("message");
         }
@@ -86,7 +87,7 @@ public Admin(AsyncRequests asyncRequests, String username, String password, Stri
 
 
     public JSONObject listTokenById(String tokenID){
-        JSONObject response=http.response(http.get("/admin/v1/tokens/"+tokenID+"", getcurrentTOKEN_ID()));
+        JSONObject response=http.response(http.get("/admin/v1/tokens/"+tokenID+"", getCurrentTOKEN_ID()));
         if((int)response.get("status_code")==200){
             response= (JSONObject) response.get("message");
         }
@@ -95,7 +96,7 @@ public Admin(AsyncRequests asyncRequests, String username, String password, Stri
 
     public String deleteTokenById(String tokenID){
         String answer=null;
-        JSONObject response=http.response(http.delete("/admin/v1/tokens/"+tokenID+"", getcurrentTOKEN_ID()));
+        JSONObject response=http.response(http.delete("/admin/v1/tokens/"+tokenID+"", getCurrentTOKEN_ID()));
         if((int)response.get("status_code")==200){
             answer= (String) response.get("message");
         }
@@ -112,16 +113,30 @@ public Admin(AsyncRequests asyncRequests, String username, String password, Stri
      *
      */
 
+    
+    
+    public String newToken() {
+        JSONObject response=this.newCurrentToken();
+        this.currentTOKEN_ID = (String) ((JSONObject) response.get("message")).get("id");
+        this.tokenExpirationTimestamp = (Double) ((JSONObject) response.get("message")).get("expires");
+        return this.currentTOKEN_ID;
+    }
+    
     /***
      *
      * @return Returns the version of the OSM installed
      */
-
     public JSONObject versionInfo(){
         return http.response(http.get("/version", ""));
     }
     
-    public String getcurrentTOKEN_ID() {
+    public String getCurrentTOKEN_ID() {
+        double curr,diff;
+        curr=currentDate();
+        diff=this.tokenExpirationTimestamp-curr;
+        if(diff<=0){
+            this.newToken();
+        }
         return this.currentTOKEN_ID;
     }
 
@@ -129,12 +144,12 @@ public Admin(AsyncRequests asyncRequests, String username, String password, Stri
      *
      * @param currentTOKEN_ID Token being used at the time by the Admin class
      */
-    private void setCurrentTOKEN_ID(String currentTOKEN_ID) {
+    public void setCurrentTOKEN_ID(String currentTOKEN_ID) {
         this.currentTOKEN_ID = currentTOKEN_ID;
     }
 
     public boolean isCurrentTokenValid(){
-        return isTokenValid(getcurrentTOKEN_ID());
+        return isTokenValid(getCurrentTOKEN_ID());
     }
 
     public boolean isTokenValid(String TOKEN_ID){
@@ -149,5 +164,7 @@ public Admin(AsyncRequests asyncRequests, String username, String password, Stri
         return (double)Instant.now().getEpochSecond();
     }
 
-
+    public AsyncRequests getHttp() {
+        return http;
+    }
 }

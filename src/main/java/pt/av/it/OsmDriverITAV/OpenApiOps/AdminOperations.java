@@ -6,22 +6,23 @@ package pt.av.it.OsmDriverITAV.OpenApiOps;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import pt.av.it.OsmDriverITAV.Interfaces.AdminOperationsInterface;
+import pt.av.it.OsmDriverITAV.Interfaces.ApiCallsInterface;
 import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 
 public class AdminOperations extends Admin implements AdminOperationsInterface {
 
     private static AdminOperations instance;
 
-    private ApiCalls apiCalls;
+    private ApiCallsInterface apiCalls;
     private AsyncRequests http;
 
-    public AdminOperations(ApiCalls apiCalls){
+    public AdminOperations(ApiCallsInterface apiCalls){
         super(apiCalls);
         this.apiCalls=apiCalls;
         this.http=apiCalls.getHttp();
     }
 
-    public static AdminOperations adminOperations( ApiCalls apiCalls){
+    public static AdminOperations adminOperations( ApiCallsInterface apiCalls){
         if(instance==null){
             instance=new AdminOperations(apiCalls);
         }

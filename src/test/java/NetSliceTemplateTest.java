@@ -34,11 +34,11 @@ public class NetSliceTemplateTest {
             properties=handler.getOsmClientProperties(handler.getNumberofOsmClients()-1);
             osmClient=new pt.av.it.OsmDriverITAV.OSMClient(properties.getUri(), properties.getUser(), properties.getPassword(), properties.getProject(), properties.getVimAccount());
             osmClient.newCurrentToken();
-            token=osmClient.getcurrentTOKEN_ID();
+            token=osmClient.getCurrentTOKEN_ID();
             path=handler.getPath();
         }
         if (token==null||token.length()<1){
-            osmClient.apiCalls.setCurrentTOKEN_ID(token);
+            osmClient.setCurrentTOKEN_ID(token);
         }
         if(!osmClient.isCurrentTokenValid()||!osmClient.isApiCallTokenValid()){
             osmClient.updateApiCallToken();

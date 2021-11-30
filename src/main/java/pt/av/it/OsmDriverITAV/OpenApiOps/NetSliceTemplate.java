@@ -6,21 +6,22 @@ package pt.av.it.OsmDriverITAV.OpenApiOps;
 import java.io.File;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import pt.av.it.OsmDriverITAV.Interfaces.ApiCallsInterface;
 import pt.av.it.OsmDriverITAV.Interfaces.NetSliceTemplateInterface;
 import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 import pt.av.it.OsmDriverITAV.Requests.Headers;
 
 public class NetSliceTemplate implements NetSliceTemplateInterface {
     private static NetSliceTemplate instance;
-    private ApiCalls apiCalls;
+    private ApiCallsInterface apiCalls;
     private AsyncRequests http;
     
-    public NetSliceTemplate(ApiCalls apiCalls) {
+    public NetSliceTemplate(ApiCallsInterface apiCalls) {
         this.apiCalls=apiCalls;
         this.http = apiCalls.getHttp();
     }
 
-    public static NetSliceTemplate netSliceTemplate( ApiCalls apiCalls){
+    public static NetSliceTemplate netSliceTemplate( ApiCallsInterface apiCalls){
         if(instance==null){
             instance=new NetSliceTemplate(apiCalls);
         }

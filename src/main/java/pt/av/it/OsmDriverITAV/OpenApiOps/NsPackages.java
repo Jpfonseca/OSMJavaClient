@@ -8,6 +8,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import pt.av.it.OsmDriverITAV.Interfaces.ApiCallsInterface;
 import pt.av.it.OsmDriverITAV.Interfaces.NsPackagesInterface;
 import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
 import pt.av.it.OsmDriverITAV.Requests.Headers;
@@ -16,14 +17,14 @@ import pt.av.it.OsmDriverITAV.Requests.Serialization;
 public class NsPackages  implements NsPackagesInterface {
     private static NsPackages instance;
     private AsyncRequests http;
-    private ApiCalls apiCalls;
+    private ApiCallsInterface apiCalls;
     
-    public NsPackages(ApiCalls apiCalls){
+    public NsPackages(ApiCallsInterface apiCalls){
         this.apiCalls=apiCalls;
         this.http=apiCalls.getHttp();
     }
 
-    public static NsPackages nsPackages( ApiCalls apiCalls){
+    public static NsPackages nsPackages( ApiCallsInterface apiCalls){
         if(instance==null){
             instance=new NsPackages(apiCalls);
         }

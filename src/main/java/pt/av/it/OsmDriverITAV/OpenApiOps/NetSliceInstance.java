@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.av.it.OsmDriverITAV.Interfaces.ApiCallsInterface;
 import pt.av.it.OsmDriverITAV.Interfaces.NetSliceInstanceInterface;
 import pt.av.it.OsmDriverITAV.OsmVsDriver;
 import pt.av.it.OsmDriverITAV.Requests.AsyncRequests;
@@ -17,15 +18,15 @@ public class NetSliceInstance implements NetSliceInstanceInterface {
     
     private static NetSliceInstance instance;
 
-    private ApiCalls apiCalls;
+    private ApiCallsInterface apiCalls;
     private AsyncRequests http;
 
-    public NetSliceInstance(ApiCalls apiCalls){
+    public NetSliceInstance(ApiCallsInterface apiCalls){
         this.apiCalls=apiCalls;
         this.http=apiCalls.getHttp();
     }
 
-    public static NetSliceInstance netSliceInstance( ApiCalls apiCalls){
+    public static NetSliceInstance netSliceInstance( ApiCallsInterface apiCalls){
         if(instance==null){
             instance=new NetSliceInstance(apiCalls);
         }
