@@ -188,11 +188,15 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                             VerticalServiceInstance vsi = this.vsRecordService.getVsInstancesFromNetworkSliceSubnet(nsi.getNsiId()).get(0);
                             switch((String)op.get("name")){
                                 case "getvnfinfo":{
-                                    this.vsRecordService.addInterdomainInfo(vsi.getVsiId(), nsi.getNfvNsId(), (JSONObject)op.get("output"));
+                                    JSONObject aux = (JSONObject)op.get("output");
+                                    log.info(aux.toJSONString());
+                                    this.vsRecordService.addInterdomainInfo(vsi.getVsiId(), nsi.getNfvNsId(), aux);
                                     break;
                                 }
                                 case "getmtdinfo":{
-                                    this.vsRecordService.addMtdInfo(vsi.getVsiId(), nsi.getNfvNsId(), (JSONObject)op.get("output"));
+                                    JSONObject aux = (JSONObject)op.get("output");
+                                    log.info(aux.toJSONString());
+                                    this.vsRecordService.addMtdInfo(vsi.getVsiId(), nsi.getNfvNsId(), aux);
                                     break;
                                 }
                             }
@@ -365,7 +369,15 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                             }
                             
                             actionParameters.put("peer_key", (String)auxInterdomainInfo.get(nssiId2).get("public_key"));
-                            actionParameters.put("peer_endpoint", (String)auxInterdomainInfo.get(nssiId2).get("endpoint"));
+                            
+                            String peerIp;
+                            if(auxInterdomainInfo.get(nssiId2).containsKey("publicEndpoint")){
+                                peerIp=(String)auxInterdomainInfo.get(nssiId2).get("publicEndpoint");
+                            }else{
+                                peerIp=(String)auxInterdomainInfo.get(nssiId2).get("internalEndpoint");
+                            }
+                            
+                            actionParameters.put("peer_endpoint", peerIp);
                             actionParameters.put("peer_network", (String)params.get("peer_network") + auxInterdomainInfo.get(nssiId2).get("PEER_ALLOWED_NETWORK"));
                             actionRequest.put("primitive_params", actionParameters);
                             actionRequest.put("member_vnf_index", "1");
@@ -410,10 +422,10 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                         if(mode == 3){
                             
                             String peerIp;
-                            if(tmpNssiId.equals(this.nssiId)){
+                            if(tmpNssiId.equals(this.nssiNfvId)){
                                 peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("internalEndpoint");
                             }else{
-                                if(auxInterdomainInfo.containsKey("publicEndpoint")){
+                                if(auxInterdomainInfo.get(tmpNssiId).containsKey("publicEndpoint")){
                                     peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("publicEndpoint");
                                 }else{
                                     peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("internalEndpoint");
@@ -430,10 +442,10 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                         }else{
                             
                             String peerIp;
-                            if(tmpNssiId.equals(this.nssiId)){
+                            if(tmpNssiId.equals(this.nssiNfvId)){
                                 peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("internalEndpoint");
                             }else{
-                                if(auxInterdomainInfo.containsKey("publicEndpoint")){
+                                if(auxInterdomainInfo.get(tmpNssiId).containsKey("publicEndpoint")){
                                     peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("publicEndpoint");
                                 }else{
                                     peerIp=(String)auxInterdomainInfo.get(tmpNssiId).get("internalEndpoint");

@@ -31,6 +31,7 @@ public abstract class Admin implements AdminInterface, ApiCallsInterface {
         /*JSONObject response = http.response(http.post("/admin/v1/tokens", , payload, ""));
         this.currentTOKEN_ID= (String) ((JSONObject) response.get("message")).get("id");
         System.out.println(this.currentTOKEN_ID);*/
+        newToken();
 
     }
 
