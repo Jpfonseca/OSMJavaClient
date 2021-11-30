@@ -454,7 +454,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                             
                             actionParameters.put("ip-peer2",peerIp);
                             actionParameters.put("mac-peer2",(String)auxInterdomainInfo.get(tmpNssiId).get("vnfMAC"));
-                            actionParameters.put("mac-gw-peer2",(String)auxInterdomainInfo.get(tmpNssiId).get("gwMAC"));
+                            actionParameters.put("mac-gw-peer2",(String)mtdInfo.get("gwMAC"));
                             actionParameters.put("ip-mtd-peer2-internal",(String)mtdInfo.get("mtdInternalIp"));
                             actionParameters.put("ip-mtd-peer2-public",(String)mtdInfo.get("mtdPublicIp"));
                             actionParameters.put("mac-mtd-peer2",(String)mtdInfo.get("mtdMAC"));
@@ -499,7 +499,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     
                     for(String nssiId2 : auxInterdomainInfo.keySet()){                  
                         if(!nssiNfvId.equals(nssiId2)){
-                            actionParameters.put("gw-address",(String)auxMtdInfo.get(nssiNfvId).get("mtdPublicIp"));
+                            actionParameters.put("gw-address",(String)auxMtdInfo.get(nssiNfvId).get("mtdInternalIp"));
                             
                             String peerIp;
                             
