@@ -77,6 +77,13 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
 
     @Override
     public String createNetworkSliceIdentifier(CreateNsiIdRequest request, String domainId, String tenantId) throws NotExistingEntityException, MethodNotImplementedException, FailedOperationException, MalformattedElementException, NotPermittedOperationException {
+        try {
+            Instant instant = Instant.now();
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/create/start/createOSM/"+instant.toString());
+            httpClient.execute(valueCollection);
+        } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+        
         log.info("Sending request to create network slice id for template '"+request.getNstId()+"' in domain '"+domainId+"'");
         
         VerticalServiceInstance vsi = this.vsInstanceRepository.findByTenantId(tenantId).get(0);
@@ -113,6 +120,13 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
         String nsiId=(String)response.get("id");
         
         this.nsiNames.put(nsiId, request.getName());
+        
+        try {
+            Instant instant = Instant.now();
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/create/stop/createOSM/"+instant.toString());
+            httpClient.execute(valueCollection);
+        } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
         
         return nsiId;
     }
