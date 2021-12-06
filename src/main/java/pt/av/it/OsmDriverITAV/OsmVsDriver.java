@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.logging.Level;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.simple.JSONArray;
@@ -122,9 +122,9 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
         try {
             Instant instant = Instant.now();
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/instantiate/stop/instantiateVsOSM/"+instant.toString());
+            HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/instantiate/stop/instantiateVsOSM/"+instant.toString());
             httpClient.execute(valueCollection);
-            valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+request.getNsiId()+"/start/instantiateOSM/"+instant.toString());
+            valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+request.getNsiId()+"/start/instantiateOSM/"+instant.toString());
             httpClient.execute(valueCollection);
         } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
         
@@ -153,9 +153,9 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
         try {
             Instant instant = Instant.now();
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/terminate/stop/terminateVsOSM/"+instant.toString());
+            HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/terminate/stop/terminateVsOSM/"+instant.toString());
             httpClient.execute(valueCollection);
-            valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+request.getNsiId()+"/start/terminateOSM/"+instant.toString());
+            valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+request.getNsiId()+"/start/terminateOSM/"+instant.toString());
             httpClient.execute(valueCollection);
         } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
         
@@ -191,7 +191,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     try {
                         Instant instant = Instant.now();
                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/instantiateOSM/"+instant.toString());
+                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsiID+"/stop/instantiateOSM/"+instant.toString());
                         httpClient.execute(valueCollection);
                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                     nsi.setStatus(NetworkSliceStatus.INSTANTIATED);
@@ -204,7 +204,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     try {
                         Instant instant = Instant.now();
                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/terminateOSM/"+instant.toString());
+                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsiID+"/stop/terminateOSM/"+instant.toString());
                         httpClient.execute(valueCollection);
                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                     nsi.setStatus(NetworkSliceStatus.TERMINATED);
@@ -229,7 +229,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                                     try {
                                         Instant instant = Instant.now();
                                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMgetvnfinfo/"+instant.toString());
+                                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMgetvnfinfo/"+instant.toString());
                                         httpClient.execute(valueCollection);
                                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                                     
@@ -243,7 +243,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                                     try {
                                         Instant instant = Instant.now();
                                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMgetmtdinfo/"+instant.toString());
+                                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMgetmtdinfo/"+instant.toString());
                                         httpClient.execute(valueCollection);
                                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                                     
@@ -253,7 +253,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                                     try {
                                         Instant instant = Instant.now();
                                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMaddpeer/"+instant.toString());
+                                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMaddpeer/"+instant.toString());
                                         httpClient.execute(valueCollection);
                                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                                     break;
@@ -262,7 +262,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                                     try {
                                         Instant instant = Instant.now();
                                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMactivatemtd/"+instant.toString());
+                                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMactivatemtd/"+instant.toString());
                                         httpClient.execute(valueCollection);
                                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                                     break;
@@ -271,7 +271,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                                     try {
                                         Instant instant = Instant.now();
                                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMroutemgmt/"+instant.toString());
+                                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMroutemgmt/"+instant.toString());
                                         httpClient.execute(valueCollection);
                                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                                     break;
@@ -341,7 +341,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 try {
                     Instant instant = Instant.now();
                     CloseableHttpClient httpClient = HttpClients.createDefault();
-                    HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMgetvnfinfo/"+instant.toString());
+                    HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMgetvnfinfo/"+instant.toString());
                     httpClient.execute(valueCollection);
                 } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                 JSONObject actionRequest = new JSONObject();
@@ -356,7 +356,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 try {
                     Instant instant = Instant.now();
                     CloseableHttpClient httpClient = HttpClients.createDefault();
-                    HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMgetmtdinfo/"+instant.toString());
+                    HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMgetmtdinfo/"+instant.toString());
                     httpClient.execute(valueCollection);
                 } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                 JSONObject actionRequest = new JSONObject();
@@ -447,7 +447,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     try {
                         Instant instant = Instant.now();
                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMaddpeer/"+instant.toString());
+                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMaddpeer/"+instant.toString());
                         httpClient.execute(valueCollection);
                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                     
@@ -502,7 +502,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     try {
                         Instant instant = Instant.now();
                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMactivatemtd/"+instant.toString());
+                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMactivatemtd/"+instant.toString());
                         httpClient.execute(valueCollection);
                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
 
@@ -594,7 +594,7 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     try {
                         Instant instant = Instant.now();
                         CloseableHttpClient httpClient = HttpClients.createDefault();
-                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMroutemgmt/"+instant.toString());
+                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMroutemgmt/"+instant.toString());
                         httpClient.execute(valueCollection);
                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                     
