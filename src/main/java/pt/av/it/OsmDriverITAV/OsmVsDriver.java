@@ -23,6 +23,7 @@ import it.nextworks.nfvmano.sebastian.record.elements.VerticalServiceInstance;
 import it.nextworks.nfvmano.sebastian.record.repo.VerticalServiceInstanceRepository;
 import it.nextworks.nfvmano.sebastian.vsfm.VsLcmService;
 import it.nextworks.nfvmano.sebastian.vsfm.sbi.NsmfLcmOperationPollingManager;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.logging.Level;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -115,6 +119,15 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
 
     @Override
     public void instantiateNetworkSlice(InstantiateNsiRequest request, String domainId, String tenantId) throws NotExistingEntityException, MethodNotImplementedException, FailedOperationException, MalformattedElementException, NotPermittedOperationException {
+        try {
+            Instant instant = Instant.now();
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/instantiate/stop/instantiateVsOSM/"+instant.toString());
+            httpClient.execute(valueCollection);
+            valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+request.getNsiId()+"/start/instantiateOSM/"+instant.toString());
+            httpClient.execute(valueCollection);
+        } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+        
         log.info("Sending request to instantiate network slice");
         JSONObject netslice = new JSONObject();
         netslice.put("nsiName", this.nsiNames.get(request.getNsiId()));
@@ -137,6 +150,15 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
 
     @Override
     public void terminateNetworkSliceInstance(TerminateNsiRequest request, String domainId, String tenantId) throws NotExistingEntityException, MethodNotImplementedException, FailedOperationException, MalformattedElementException, NotPermittedOperationException {
+        try {
+            Instant instant = Instant.now();
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/terminate/stop/terminateVsOSM/"+instant.toString());
+            httpClient.execute(valueCollection);
+            valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+request.getNsiId()+"/start/terminateOSM/"+instant.toString());
+            httpClient.execute(valueCollection);
+        } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+        
         log.info("Sending request to terminate network slice");
         JSONObject netslice = new JSONObject();
         JSONObject response = client.netSliceInstanceOps.terminateNsi(request.getNsiId(), netslice);
@@ -166,6 +188,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     nsi.setStatus(NetworkSliceStatus.INSTANTIATING);
                     break;
                 case "running":
+                    try {
+                        Instant instant = Instant.now();
+                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/instantiateOSM/"+instant.toString());
+                        httpClient.execute(valueCollection);
+                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                     nsi.setStatus(NetworkSliceStatus.INSTANTIATED);
                     break;
                 case "terminating":
@@ -173,6 +201,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                     nsis.add(nsi);
                     return nsis;
                 case "terminated":
+                    try {
+                        Instant instant = Instant.now();
+                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/terminateOSM/"+instant.toString());
+                        httpClient.execute(valueCollection);
+                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                     nsi.setStatus(NetworkSliceStatus.TERMINATED);
                     nsis.add(nsi);
                     return nsis;
@@ -191,12 +225,55 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                                     JSONObject aux = (JSONObject)op.get("output");
                                     log.info(aux.toJSONString());
                                     this.vsRecordService.addInterdomainInfo(vsi.getVsiId(), nsi.getNfvNsId(), aux);
+                                    
+                                    try {
+                                        Instant instant = Instant.now();
+                                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMgetvnfinfo/"+instant.toString());
+                                        httpClient.execute(valueCollection);
+                                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+                                    
                                     break;
                                 }
                                 case "getmtdinfo":{
                                     JSONObject aux = (JSONObject)op.get("output");
                                     log.info(aux.toJSONString());
                                     this.vsRecordService.addMtdInfo(vsi.getVsiId(), nsi.getNfvNsId(), aux);
+                                    
+                                    try {
+                                        Instant instant = Instant.now();
+                                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMgetmtdinfo/"+instant.toString());
+                                        httpClient.execute(valueCollection);
+                                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+                                    
+                                    break;
+                                }
+                                case "addpeer":{
+                                    try {
+                                        Instant instant = Instant.now();
+                                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMaddpeer/"+instant.toString());
+                                        httpClient.execute(valueCollection);
+                                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+                                    break;
+                                }
+                                case "activatemtd":{
+                                    try {
+                                        Instant instant = Instant.now();
+                                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMactivatemtd/"+instant.toString());
+                                        httpClient.execute(valueCollection);
+                                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+                                    break;
+                                }
+                                case "routemgmt":{
+                                    try {
+                                        Instant instant = Instant.now();
+                                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMroutemgmt/"+instant.toString());
+                                        httpClient.execute(valueCollection);
+                                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                                     break;
                                 }
                             }
@@ -261,6 +338,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 return;
             }
             case "getvnfinfo":{
+                try {
+                    Instant instant = Instant.now();
+                    CloseableHttpClient httpClient = HttpClients.createDefault();
+                    HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMgetvnfinfo/"+instant.toString());
+                    httpClient.execute(valueCollection);
+                } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                 JSONObject actionRequest = new JSONObject();
                 actionRequest.put("primitive", "getvnfinfo");
                 actionRequest.put("primitive_params", new JSONObject());
@@ -270,6 +353,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 break;
             }
             case "getmtdinfo":{
+                try {
+                    Instant instant = Instant.now();
+                    CloseableHttpClient httpClient = HttpClients.createDefault();
+                    HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMgetmtdinfo/"+instant.toString());
+                    httpClient.execute(valueCollection);
+                } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                 JSONObject actionRequest = new JSONObject();
                 actionRequest.put("primitive", "getmtdinfo");
                 actionRequest.put("primitive_params", new JSONObject());
@@ -355,6 +444,13 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                             java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                    try {
+                        Instant instant = Instant.now();
+                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMaddpeer/"+instant.toString());
+                        httpClient.execute(valueCollection);
+                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+                    
 
                     for(String nssiId2 : auxInterdomainInfo.keySet()){                  
                         if(!nssiNfvId.equals(nssiId2)){
@@ -402,6 +498,13 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                             java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                    
+                    try {
+                        Instant instant = Instant.now();
+                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMactivatemtd/"+instant.toString());
+                        httpClient.execute(valueCollection);
+                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
 
                     log.info("Activating MTD in the NSSI '"+nssiId+"' of service '"+auxVsi.getId()+"'");
 
@@ -487,6 +590,14 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                             java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                    
+                    try {
+                        Instant instant = Instant.now();
+                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                        HttpPost valueCollection = new HttpPost("http://10.0.12.120:9999/VS/"+nssiId+"/start/OSMroutemgmt/"+instant.toString());
+                        httpClient.execute(valueCollection);
+                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+                    
                     log.info("Performing route managment action on NSI '"+nssiId+"'");
 
                     JSONObject actionRequest = new JSONObject();
