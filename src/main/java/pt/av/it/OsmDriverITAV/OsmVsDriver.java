@@ -381,6 +381,25 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 JSONObject response = client.nsInstances.actionNSi(nsi.getNfvNsId(), actionRequest);
                 break;
             }
+            case "modifymtd":{
+                try {
+                    Instant instant = Instant.now();
+                    CloseableHttpClient httpClient = HttpClients.createDefault();
+                    HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsi.getNsiId()+"/start/OSMmodifymtd/"+instant.toString());
+                    httpClient.execute(valueCollection);
+                } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+                JSONObject actionRequest = new JSONObject();
+                actionRequest.put("primitive", "modifymtd");
+                Map<String,String> actionParameters = new HashMap<String,String>();
+                for(Entry<String,String> entry:params.entrySet()){
+                    actionParameters.put(entry.getKey(), entry.getValue());
+                }
+                actionRequest.put("primitive_params", actionParameters);
+                
+                actionRequest.put("member_vnf_index", "2");
+                JSONObject response = client.nsInstances.actionNSi(nsi.getNfvNsId(), actionRequest);
+                break;
+            }
             default:{
                 JSONObject actionRequest = new JSONObject();
                 actionRequest.put("primitive", ruleName);
