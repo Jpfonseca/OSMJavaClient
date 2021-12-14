@@ -324,6 +324,13 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
     public void configureNetworkSliceInstance(ConfigureNsiRequest request, String domainId, String tenantId) throws MethodNotImplementedException, FailedOperationException, MalformattedElementException {
         //Executing primitives over the NS instance due to OSM restrictions        
         log.info("Configuring Subnet "+request.getNsiId().toString());
+        
+        try {
+            Instant instant = Instant.now();
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/day2/stop/day2VsOSM/"+instant.toString());
+            httpClient.execute(valueCollection);
+        } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
 
         Map<String,String> params=request.getParameters();
         String ruleName=params.get("ruleName");
