@@ -290,6 +290,15 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                                     } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                                     break;
                                 }
+                                case "modifymtd":{
+                                    try {
+                                        Instant instant = Instant.now();
+                                        CloseableHttpClient httpClient = HttpClients.createDefault();
+                                        HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsiID+"/stop/OSMmodifymtd/"+instant.toString());
+                                        httpClient.execute(valueCollection);
+                                    } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
+                                    break;
+                                }
                             }
                             nsi.setStatus(NetworkSliceStatus.CONFIGURED);
                         }else{
@@ -401,6 +410,12 @@ public class OsmVsDriver implements NsmfLcmProviderInterface{
                 break;
             }
             default:{
+                try {
+                    Instant instant = Instant.now();
+                    CloseableHttpClient httpClient = HttpClients.createDefault();
+                    HttpGet valueCollection = new HttpGet("http://10.0.12.120:9999/VS/"+nsi.getNsiId()+"/start/OSM"+ruleName+"/"+instant.toString());
+                    httpClient.execute(valueCollection);
+                } catch (Exception ex) {java.util.logging.Logger.getLogger(OsmVsDriver.class.getName()).log(Level.SEVERE, null, ex);}
                 JSONObject actionRequest = new JSONObject();
                 actionRequest.put("primitive", ruleName);
                 actionRequest.put("primitive_params", params);
